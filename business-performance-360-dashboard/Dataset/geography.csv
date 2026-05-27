@@ -1,0 +1,15 @@
+State,District,City,Tier,Market_Type,Region
+Kerala,Ernakulam,Kochi,Tier 1,Urban,South
+Kerala,Thiruvananthapuram,Trivandrum,Tier 1,Urban,South
+Kerala,Kozhikode,Kozhikode,Tier 2,Urban,South
+Kerala,Thrissur,Thrissur,Tier 2,Urban,South
+Tamil Nadu,Chennai,Chennai,Tier 1,Urban,South
+Karnataka,Bangalore,Bangalore,Tier 1,Urban,South
+Telangana,Hyderabad,Hyderabad,Tier 1,Urban,South
+Maharashtra,Mumbai,Mumbai,Tier 1,Urban,West
+Maharashtra,Pune,Pune,Tier 1,Urban,West
+Delhi,Delhi,Delhi,Tier 1,Urban,North
+Uttar Pradesh,Lucknow,Lucknow,Tier 2,Urban,North
+West Bengal,Kolkata,Kolkata,Tier 1,Urban,East
+Assam,Guwahati,Guwahati,Tier 2,Urban,East
+Bihar,Patna,Patna,Tier 2,Urban,East

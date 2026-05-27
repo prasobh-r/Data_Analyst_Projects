@@ -1,0 +1,91 @@
+Product_ID,Product_Name,Category,Sub_Category,Price,Cost
+1,Snacks Item 1,FMCG,Snacks,3797,2067.4553515009807
+2,Snacks Item 2,FMCG,Snacks,1384,1089.5339103549215
+3,Snacks Item 3,FMCG,Snacks,735,449.2214470437386
+4,Snacks Item 4,FMCG,Snacks,900,455.4718993760617
+5,Snacks Item 5,FMCG,Snacks,2480,1815.5881528545808
+6,Snacks Item 6,FMCG,Snacks,390,310.70882423033595
+7,Snacks Item 7,FMCG,Snacks,2293,1461.4013908656702
+8,Snacks Item 8,FMCG,Snacks,2972,1924.5789937855998
+9,Snacks Item 9,FMCG,Snacks,4907,2812.044837200985
+10,Snacks Item 10,FMCG,Snacks,3504,2688.0286256896616
+11,Beverages Item 11,FMCG,Beverages,4813,3651.576336782628
+12,Beverages Item 12,FMCG,Beverages,1662,1061.7288197751104
+13,Beverages Item 13,FMCG,Beverages,937,483.22499714891427
+14,Beverages Item 14,FMCG,Beverages,453,252.3537835203995
+15,Beverages Item 15,FMCG,Beverages,2883,1832.9197699566248
+16,Beverages Item 16,FMCG,Beverages,3456,2688.2268395040774
+17,Beverages Item 17,FMCG,Beverages,3793,2776.9001698556244
+18,Beverages Item 18,FMCG,Beverages,3975,3089.02532803067
+19,Beverages Item 19,FMCG,Beverages,3526,2477.353157824462
+20,Beverages Item 20,FMCG,Beverages,3555,2580.4649533047404
+21,Personal Care Item 21,FMCG,Personal Care,4889,3408.79347798809
+22,Personal Care Item 22,FMCG,Personal Care,3825,2105.888442295039
+23,Personal Care Item 23,FMCG,Personal Care,4729,2604.219271870205
+24,Personal Care Item 24,FMCG,Personal Care,685,540.268533795306
+25,Personal Care Item 25,FMCG,Personal Care,836,643.236646948032
+26,Personal Care Item 26,FMCG,Personal Care,616,372.74232640702525
+27,Personal Care Item 27,FMCG,Personal Care,4791,3302.981117816173
+28,Personal Care Item 28,FMCG,Personal Care,4322,3304.368217822721
+29,Personal Care Item 29,FMCG,Personal Care,4625,2852.5664646850983
+30,Personal Care Item 30,FMCG,Personal Care,971,669.7766226080797
+31,Mobile Item 31,Electronics,Mobile,488,285.6870906858889
+32,Mobile Item 32,Electronics,Mobile,979,542.998860686991
+33,Mobile Item 33,Electronics,Mobile,2355,1810.6543564297008
+34,Mobile Item 34,Electronics,Mobile,538,414.76848903880466
+35,Mobile Item 35,Electronics,Mobile,3183,2447.4343575924704
+36,Mobile Item 36,Electronics,Mobile,1764,907.8810324409217
+37,Mobile Item 37,Electronics,Mobile,4103,2191.931873774766
+38,Mobile Item 38,Electronics,Mobile,1447,890.0759272004256
+39,Mobile Item 39,Electronics,Mobile,2571,1648.251938589878
+40,Mobile Item 40,Electronics,Mobile,2865,1929.6635845709643
+41,Laptop Item 41,Electronics,Laptop,4379,2624.4662544601715
+42,Laptop Item 42,Electronics,Laptop,4782,3511.2347153364008
+43,Laptop Item 43,Electronics,Laptop,1631,846.3871474311651
+44,Laptop Item 44,Electronics,Laptop,1282,664.53437288038
+45,Laptop Item 45,Electronics,Laptop,2018,1222.944291077882
+46,Laptop Item 46,Electronics,Laptop,3492,2218.5611002499577
+47,Laptop Item 47,Electronics,Laptop,4043,2639.856434289576
+48,Laptop Item 48,Electronics,Laptop,1382,776.3236396573999
+49,Laptop Item 49,Electronics,Laptop,4676,3155.52692515161
+50,Laptop Item 50,Electronics,Laptop,3862,2001.7322781239848
+51,Accessories Item 51,Electronics,Accessories,3124,1687.1312897854277
+52,Accessories Item 52,Electronics,Accessories,4558,2427.6398535350045
+53,Accessories Item 53,Electronics,Accessories,541,412.8759387030355
+54,Accessories Item 54,Electronics,Accessories,3959,3011.2867311286036
+55,Accessories Item 55,Electronics,Accessories,2596,1438.2425881670497
+56,Accessories Item 56,Electronics,Accessories,3271,1993.8694739365546
+57,Accessories Item 57,Electronics,Accessories,1300,1035.5989283546583
+58,Accessories Item 58,Electronics,Accessories,4966,2829.86564533158
+59,Accessories Item 59,Electronics,Accessories,3065,1714.384435294267
+60,Accessories Item 60,Electronics,Accessories,2425,1476.9325381136107
+61,Men Item 61,Apparel,Men,2689,1687.904625734206
+62,Men Item 62,Apparel,Men,695,440.00985166292924
+63,Men Item 63,Apparel,Men,4839,3394.4799344855815
+64,Men Item 64,Apparel,Men,1280,989.6512848374375
+65,Men Item 65,Apparel,Men,418,313.8107829340166
+66,Men Item 66,Apparel,Men,2888,1605.5722822580299
+67,Men Item 67,Apparel,Men,1770,1258.7285155523339
+68,Men Item 68,Apparel,Men,1769,1396.1433019615843
+69,Men Item 69,Apparel,Men,854,566.3706621923942
+70,Men Item 70,Apparel,Men,185,117.78919754244474
+71,Women Item 71,Apparel,Women,324,225.71671746884215
+72,Women Item 72,Apparel,Women,2169,1284.0837630723368
+73,Women Item 73,Apparel,Women,4352,2463.713361701317
+74,Women Item 74,Apparel,Women,2446,1487.1562700951304
+75,Women Item 75,Apparel,Women,3017,1959.3154985552467
+76,Women Item 76,Apparel,Women,2646,1877.6341422066537
+77,Women Item 77,Apparel,Women,1569,1069.82275074031
+78,Women Item 78,Apparel,Women,3029,1827.559380746
+79,Women Item 79,Apparel,Women,4535,3187.0748709652134
+80,Women Item 80,Apparel,Women,3161,1654.2618119961191
+81,Kids Item 81,Apparel,Kids,4721,3089.6394619005036
+82,Kids Item 82,Apparel,Kids,4091,2100.0683832362433
+83,Kids Item 83,Apparel,Kids,1645,927.7556221856279
+84,Kids Item 84,Apparel,Kids,2900,1849.3915741482754
+85,Kids Item 85,Apparel,Kids,4663,3657.826277497981
+86,Kids Item 86,Apparel,Kids,2630,1698.528397725439
+87,Kids Item 87,Apparel,Kids,3064,2386.9303864313515
+88,Kids Item 88,Apparel,Kids,2688,1944.6392194785092
+89,Kids Item 89,Apparel,Kids,1454,794.6475057033447
+90,Kids Item 90,Apparel,Kids,690,361.0623823990912
