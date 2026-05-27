@@ -1,6 +1,6 @@
 # 📊 BUSINESS PERFORMANCE 360° – End-to-End BI & Analytics Project
 
-![Banner](Dashboard%20Screenshots/Dashboard.jpg)
+![Banner](Dashboard%20Screenshots/Dashboard.png)
 
 ## 📌 Project Overview
 
