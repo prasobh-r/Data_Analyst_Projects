@@ -51,7 +51,7 @@ Performed complete ETL and business transformation workflow using SQL Server.
 
 ### ✔ Data Cleaning
 
-* NULL value handling
+* NULL value handling 
 * Duplicate removal
 * Text standardization
 * Data type corrections
