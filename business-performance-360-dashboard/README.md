@@ -1,4 +1,6 @@
+
 📊 BUSINESS PERFORMANCE 360° – End-to-End BI & Analytics Project
+
 📌 Project Overview
 BUSINESS PERFORMANCE 360° is a complete end-to-end Business Intelligence and Data Analytics project built using Python, SQL Server, Power BI, DAX, and Excel.
 The objective of this project is to simulate a real-world business reporting environment where decision-makers can monitor:
