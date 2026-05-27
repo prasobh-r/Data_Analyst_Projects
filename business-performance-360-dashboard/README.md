@@ -26,11 +26,17 @@ This project was designed using the **STAR Method (Situation, Task, Action, Resu
 Created a realistic retail business dataset using Python including:
 
 ✔ Orders
+
 ✔ Customers
+
 ✔ Products
+
 ✔ Revenue & Profit
+
 ✔ Delivery Metrics
+
 ✔ Geographic Data
+
 ✔ Seasonal Trends
 
 The synthetic dataset was designed to mimic real-world retail business operations.
