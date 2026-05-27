@@ -323,14 +323,23 @@ BUSINESS-PERFORMANCE-360/
 This project demonstrates a complete end-to-end analytics workflow covering:
 
 ✅ Synthetic Data Generation
+
 ✅ SQL Data Engineering
+
 ✅ ETL & KPI Transformation
+
 ✅ Data Modeling
+
 ✅ DAX & Time Intelligence
+
 ✅ Executive Dashboard Design
+
 ✅ Business Storytelling
+
 ✅ Operational Risk Analysis
+
 ✅ Strategic Recommendation Systems
+
 ✅ Business KPI Monitoring
 
 The dashboards were designed not only for visualization but also to support executive decision-making through actionable business insights and KPI-driven analysis.
@@ -340,11 +349,17 @@ The dashboards were designed not only for visualization but also to support exec
 # 🔮 Future Improvements
 
 🚀 Predictive Analytics
+
 🚀 Demand Forecasting
+
 🚀 Real-Time Database Integration
+
 🚀 AI-Based Insights
+
 🚀 Customer Segmentation
+
 🚀 Supply Chain Analytics
+
 🚀 Forecasting Models using Python
 
 ---
@@ -352,6 +367,7 @@ The dashboards were designed not only for visualization but also to support exec
 # 📬 Connect With Me
 
 💼 LinkedIn: [www.linkedin.com/in/prasobh04](http://www.linkedin.com/in/prasobh04)
+
 💻 GitHub: https://github.com/prasobh-r
 
 ---
