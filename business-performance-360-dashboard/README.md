@@ -154,15 +154,25 @@ Product and category-level profitability analysis:
 # 📈 Key Features
 
 ✅ Interactive Executive Dashboards
+
 ✅ Dynamic KPI Cards
+
 ✅ DAX Measures & Calculations
+
 ✅ Operational Risk Monitoring
+
 ✅ Geographic Performance Analysis
+
 ✅ Product Profitability Tracking
+
 ✅ Seasonal Business Insights
+
 ✅ Strategic Recommendation Panels
+
 ✅ Business Storytelling Layouts
+
 ✅ Time Intelligence Analysis
+
 ✅ Profitability Optimization Insights
 
 ---
@@ -258,53 +268,53 @@ Created a complete executive-level analytics solution capable of:
 
 ## 🏠 Executive Overview
 
-![Executive Overview](Dashboard%20Screenshots/Business_Performance_360_page-0001.jpg)
+![Executive Overview](Dashboard%20Screenshots/Executive%20Overview.jpg)
 
 ---
 
 ## 🌍 Geographic Analysis
 
-![Geographic Analysis](Dashboard%20Screenshots/Business_Performance_360_page-0002.jpg)
+![Geographic Analysis](Dashboard%20Screenshots/Geographic%20Analysis.jpg)
 
 ---
 
 ## ⚠️ Risk & Operations
 
-![Risk and Operations](Dashboard%20Screenshots/Business_Performance_360_page-0003.jpg)
+![Risk and Operations](Dashboard%20Screenshots/Risk%20%26%20Operations.jpg)
 
 ---
 
 ## 📦 Product Performance
 
-![Product Performance](Dashboard%20Screenshots/Business_Performance_360_page-0004.jpg)
+![Product Performance](Dashboard%20Screenshots/Product%20Performance.jpg)
+
 
 ---
 
 # 📂 Repository Structure
 
-```plaintext id="ttc3ln"
+```plaintext
 BUSINESS-PERFORMANCE-360/
 │
 ├── Dashboard Screenshots/
-│   ├── Business_Performance_360_page-0001.jpg
-│   ├── Business_Performance_360_page-0002.jpg
-│   ├── Business_Performance_360_page-0003.jpg
-│   └── Business_Performance_360_page-0004.jpg
+│   ├── Executive Overview.jpg
+│   ├── Geographic Analysis.jpg
+│   ├── Risk & Operations.jpg
+│   └── Product Performance.jpg
 │
 ├── Dataset/
-│   ├── synthetic_business_dataset.csv
-│   └── dataset_generation.py
+│   ├── sales.csv
+│   └── Business_Performance_360.ipynb
 │
 ├── SQL Scripts/
-│   └── business_performance_360.sql
+│   └── Business_Performance_360.sql
 │
 ├── Power BI Dashboard/
 │   └── Business_Performance_360.pbix
 │
-├── README.md
-│
-└── LICENSE
+└── README.md
 ```
+
 
 ---
 
