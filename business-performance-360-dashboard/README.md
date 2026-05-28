@@ -274,26 +274,25 @@ Created a complete executive-level analytics solution capable of:
 
 ## 🏠 Executive Overview
 
-![Executive Overview](Dashboard%20Screenshots/Executive%20Overview.jpg)
+![Executive Overview](https://raw.githubusercontent.com/prasobh-r/Data_Analyst_Projects/main/business-performance-360-dashboard/Dashboard%20Screenshots/Executive%20Overview.jpg)
 
 ---
 
 ## 🌍 Geographic Analysis
 
-![Geographic Analysis](Dashboard%20Screenshots/Geographic%20Analysis.jpg)
+![Geographic Analysis](https://raw.githubusercontent.com/prasobh-r/Data_Analyst_Projects/main/business-performance-360-dashboard/Dashboard%20Screenshots/Geographic%20Analysis.jpg)
 
 ---
 
 ## ⚠️ Risk & Operations
 
-![Risk and Operations](Dashboard%20Screenshots/Risk%20%26%20Operations.jpg)
+![Risk and Operations](https://raw.githubusercontent.com/prasobh-r/Data_Analyst_Projects/main/business-performance-360-dashboard/Dashboard%20Screenshots/Risk%20%26%20Operations.jpg)
 
 ---
 
 ## 📦 Product Performance
 
-![Product Performance](Dashboard%20Screenshots/Product%20Performance.jpg)
-
+![Product Performance](https://raw.githubusercontent.com/prasobh-r/Data_Analyst_Projects/main/business-performance-360-dashboard/Dashboard%20Screenshots/Product%20Performance.jpg)
 
 ---
 
