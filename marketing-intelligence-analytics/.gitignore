@@ -1,0 +1,16 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# SQL Server / SSMS
+*.ldf
+*.mdf
+*.bak
+*.trn
+
+# Editor files
+.vscode/
+*.swp
+
+# Local environment
+*.env
