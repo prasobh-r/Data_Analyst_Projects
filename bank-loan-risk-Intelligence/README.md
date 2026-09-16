@@ -5,7 +5,7 @@ covering data engineering, an independently-built credit scorecard, and a
 3-page Power BI decision-support dashboard with a live approval-cutoff
 simulator. Built across Python, SQL Server, and Power BI.
 
-![Portfolio & Trajectory](Images/page1_portfolio_trajectory.png)
+![Portfolio & Trajectory](Images/page1_portfolio_trajectory.jpg)
 
 ---
 
@@ -143,14 +143,14 @@ shaded annotation flagging exactly where the visible trend stops being
 trustworthy (the immature-vintage-bias effect), rather than reporting the
 naive decline at face value.
 
-![Portfolio & Trajectory](Images/page1_portfolio_trajectory.png)
+![Portfolio & Trajectory](Images/page1_portfolio_trajectory.jpg)
 
 **2. The Scorecard: Built, Validated, Benchmarked** — the WOE/IV feature
 ranking, AUC/KS/Gini/PSI, and the centerpiece finding: a grade-comparison
 matrix showing the model discriminates risk *within every single
 LendingClub grade*, not just in aggregate.
 
-![The Scorecard](Images/page2_scorecard.png)
+![The Scorecard](Images/page2_scorecard.jpg)
 
 **3. Segmentation & the Decision** — geographic, purpose, and DTI-decile
 risk concentration, flowing directly into a **live What-If score-cutoff
@@ -159,7 +159,7 @@ correctly-declined bad loans, and lost good loans update in real time,
 alongside a fixed reference table and a waterfall chart showing the full
 book's flow down to the approved subset.
 
-![Segmentation & the Decision](Images/page3_segmentation_decision.png)
+![Segmentation & the Decision](Images/page3_segmentation_decision.jpg)
 
 ---
 
