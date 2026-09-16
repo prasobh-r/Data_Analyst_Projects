@@ -264,30 +264,38 @@ Jupyter Notebook
 
 ```
 Bank-Risk-Intelligence/
+│
 ├── README.md
+│
 ├── Dataset/
 │   ├── loans_clean.csv
 │   ├── loans_model_ready.csv
 │   ├── loans_woe_transformed.csv
 │   └── loans_scored.csv
+│
 ├── Python/
-│   ├── 01_load_and_clean_lendingclub.py
+│   ├── 01_load_and_clean_lendingclub.ipynb
 │   ├── 02_EDA_and_cleaning.ipynb
 │   ├── 03_woe_iv_binning.ipynb
 │   └── 04_scorecard_model_and_evaluation.ipynb
+│
 ├── SQL/
 │   ├── 01_Database_Setup_LendingClub.sql
 │   └── 02_Analysis_Queries_LendingClub.sql
+│
 ├── PowerBI/
 │   └── Bank_Risk_Intelligence.pbix
+│
 ├── Images/
-│   ├── page1_portfolio_trajectory.jpg
-│   ├── page2_scorecard.jpg
-│   └── page3_segmentation_decision.jpg
+│   ├── page1_portfolio_trajectory.jng
+│   ├── page2_scorecard.jng
+│   └── page3_segmentation_decision.jng
+│
 └── Documentation/
-    ├── methodology_notes.md      (WOE/IV, KS, Gini, PSI explained)
+    ├── methodology_notes.md
     ├── dataset_guide.md
-    └── data_quality_notes.md
+    ├── data_quality_notes.md
+    └── data_dictionary.md
 ```
 
 ---
