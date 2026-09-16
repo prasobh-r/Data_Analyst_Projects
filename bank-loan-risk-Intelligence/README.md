@@ -281,9 +281,9 @@ Bank-Risk-Intelligence/
 ├── PowerBI/
 │   └── Bank_Risk_Intelligence.pbix
 ├── Images/
-│   ├── page1_portfolio_trajectory.png
-│   ├── page2_scorecard.png
-│   └── page3_segmentation_decision.png
+│   ├── page1_portfolio_trajectory.jpg
+│   ├── page2_scorecard.jpg
+│   └── page3_segmentation_decision.jpg
 └── Documentation/
     ├── methodology_notes.md      (WOE/IV, KS, Gini, PSI explained)
     ├── dataset_guide.md
