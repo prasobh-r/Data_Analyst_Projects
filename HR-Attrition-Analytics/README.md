@@ -78,6 +78,7 @@ Developed a three-page interactive dashboard with KPI cards, charts, filters, an
 ## Dashboard Pages
 
 ### Page 1 — Employee Attrition & Workforce Analytics
+![Executive Overview](06_Documentation/screenshots/Executive_Overview.jpg)
 Provides a high-level overview of the workforce and overall attrition.
 
 **Key metrics:** Total Employees, Attrition Employees, Active Employees, and Attrition Rate.
@@ -85,6 +86,7 @@ Provides a high-level overview of the workforce and overall attrition.
 **Purpose:** Establish the overall workforce baseline and summarize attrition. The sector chart includes employee counts in its tooltips so viewers can interpret rates in the context of sector workforce size.
 
 ### Page 2 — Employee Profile & Demographics
+![Employee Profile](06_Documentation/screenshots/Employee_Profile.jpg)
 Explores workforce composition and employee distribution.
 
 **Key analyses:** employee distribution by gender, job title, and experience, with interactive filtering.
@@ -92,6 +94,7 @@ Explores workforce composition and employee distribution.
 **Purpose:** Understand workforce composition and how employees are distributed across roles and demographic categories.
 
 ### Page 3 — Attrition Drivers & Risk Analysis
+![Attrition Drivers](06_Documentation/screenshots/Attrition_Drivers.jpg)
 Examines observed attrition-rate differences across selected job-related and employee-experience categories.
 
 **Key analyses:** attrition rate by driver category and experience band, highest observed category-level rates, department and job-title comparisons, and key findings.
