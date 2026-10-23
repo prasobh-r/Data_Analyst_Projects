@@ -1,0 +1,6 @@
+# HR Attrition Analytics — Python dependencies
+pandas
+numpy
+matplotlib
+seaborn
+openpyxl
