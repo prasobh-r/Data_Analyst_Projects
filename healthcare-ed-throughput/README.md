@@ -1,77 +1,86 @@
 # Healthcare ED Throughput Optimization
+### A Data-Driven Analysis of Patient Flow, Waiting Times, and Left Without Being Seen (LWBS)
 
-An end-to-end healthcare analytics project examining emergency department (ED) patient flow, Left Without Being Seen (LWBS) patterns, timestamp quality, and operational reporting limitations using **SQL Server, Python, and Power BI**.
+## Project Overview
 
-The project demonstrates data validation, timestamp-based KPI development, statistical analysis, SQL–Power BI reconciliation, and responsible interpretation of healthcare data.
+This project analyzes Emergency Department (ED) visit data to understand patient flow, waiting times, operational bottlenecks, and Left Without Being Seen (LWBS) patterns.
 
-> **Data transparency:** The original dataset source and redistribution license have not been verified. The dataset may be simulated. Findings should therefore be interpreted as an analytical demonstration, not as evidence of real-world hospital performance.
+The project follows an end-to-end analytics workflow using **SQL Server, Python, statistical analysis, and Power BI**. It focuses on validating healthcare visit records, calculating timestamp-based care intervals, examining LWBS patterns, conducting statistical significance tests, and presenting operational findings through an interactive dashboard.
 
-## Table of Contents
-
-- [Business Problem](#business-problem)
-- [Business Questions](#business-questions)
-- [Project Objectives](#project-objectives)
-- [Dataset Overview](#dataset-overview)
-- [Tools and Technologies](#tools-and-technologies)
-- [Repository Structure](#repository-structure)
-- [Methodology](#methodology)
-- [Key Findings](#key-findings)
-- [Statistical Analysis](#statistical-analysis)
-- [Power BI Dashboard](#power-bi-dashboard)
-- [SQL and Power BI Reconciliation](#sql-and-power-bi-reconciliation)
-- [How to Reproduce](#how-to-reproduce)
-- [Limitations](#limitations)
-- [Future Improvements](#future-improvements)
-- [Author](#author)
+The analysis also highlights data-quality limitations and distinguishes between statistically observed patterns and conclusions that the available data cannot support.
 
 ## Business Problem
 
-Emergency departments need reliable information about patient flow, waiting intervals, and patients who leave before being seen.
+Emergency Departments need to manage patient arrivals, triage, physician assessments, and final dispositions efficiently. Delays at different stages of the care journey may affect patient experience and operational performance.
 
-This project develops an analytical workflow to examine recorded visit timestamps, measure valid care intervals, explore LWBS patterns, and identify data-quality limitations that affect interpretation.
+This project investigates the available visit records to understand:
 
-The objective is to demonstrate how SQL Server, Python, and Power BI can work together to produce traceable and transparent healthcare analytics.
-
-## Business Questions
-
-1. What proportion of recorded visits is classified as LWBS?
-2. How does the recorded LWBS rate vary by arrival year and hour?
-3. How does LWBS vary across observed triage-wait bands and recorded triage scores?
-4. How much of the available timestamp data supports valid care-interval calculations?
-5. What data-quality and classification limitations should decision-makers consider?
+- How patients move through different stages of the ED process.
+- How long patients wait between key care stages.
+- What patterns appear in LWBS visits.
+- Whether observed differences in LWBS rates are statistically significant.
+- How timestamp quality and missing records affect operational reporting.
 
 ## Project Objectives
 
-- Validate visit records and timestamp quality.
-- Calculate observed care intervals from recorded timestamps.
-- Measure overall and time-based LWBS patterns.
-- Examine LWBS across observed wait bands and recorded triage scores.
-- Apply statistical tests to selected categorical comparisons.
-- Build an interactive Power BI dashboard with transparent KPI eligibility counts.
-- Reconcile SQL results with Power BI measures.
-- Document analytical limitations without making unsupported clinical or causal claims.
+1. Validate the completeness and consistency of ED visit records.
+2. Analyze patient flow using timestamp-based care intervals.
+3. Identify potential operational bottlenecks.
+4. Examine LWBS patterns by arrival year, arrival hour, wait-time category, and triage score.
+5. Apply statistical tests to evaluate observed differences.
+6. Reconcile SQL analysis results with Power BI reporting.
+7. Communicate findings while clearly documenting data limitations.
 
 ## Dataset Overview
 
+The project dataset contains **200,000 ED visit records** covering the period from **January 1, 2019, to December 31, 2025**.
+
+### Dataset Summary
+
 | Attribute | Description |
 |---|---|
-| Recorded ED visits | 200,000 |
+| Total ED visits | 200,000 |
 | Distinct patients | 49,059 |
-| Arrival date range | January 2019 – December 2025 |
+| Arrival date range | 2019-01-01 to 2025-12-31 |
+| Analysis unit | Individual visit |
 | Disposition categories | Discharged, Admitted, LWBS |
-| Primary analysis unit | Visit |
-| Repeated observations | Multiple visits may belong to the same patient |
+| Data structure | Visit-level records |
+| Repeated patient visits | A patient may have multiple visits |
 
-The dataset contains multiple visits for some patients. Patient-level clustering is considered in the exploratory GEE analysis.
+### Disposition Distribution
 
-**Data provenance:** The original source and redistribution license have not been verified. The dataset may be simulated, and its findings should not be generalized to actual hospital operations.
+| Disposition | Visit Count |
+|---|---:|
+| Discharged | 99,845 |
+| Admitted | 80,283 |
+| LWBS | 19,872 |
+| **Total** | **200,000** |
 
-## Tools and Technologies
+Overall, LWBS visits represent approximately **9.94%** of all recorded visits.
 
-- **SQL Server:** Data validation, timestamp interval calculations, analytical views, and reconciliation queries.
-- **Python:** Data preparation and statistical analysis using Pandas, SciPy, and Statsmodels.
-- **Power BI:** Interactive dashboards, KPI reporting, patient-flow analysis, and data-quality reporting.
-- **Jupyter Notebook:** Reproducible statistical analysis and documentation.
+### Dataset Files
+
+| File | Purpose |
+|---|---|
+| `dataset/raw/Cleaned_ED_Visits.csv` | Raw project input dataset containing ED visit records. |
+| `dataset/processed/ed_visits_timestamp_corrected.csv` | Processed dataset used for timestamp-based analysis and statistical validation. |
+| `docs/lwbs_significance_results.csv` | Exported statistical significance test results. |
+| `docs/lwbs_statistical_validation.csv` | Supporting statistical validation results. |
+
+**Data transparency:** The original dataset source and redistribution license have not been verified. The dataset may be simulated. The analysis should therefore be interpreted as an analytical demonstration rather than evidence of actual hospital performance. Verify redistribution permission and ensure that files contain no sensitive or identifying patient information before making them publicly available.
+
+## Technology Stack
+
+| Technology | Application |
+|---|---|
+| SQL Server | Data validation, transformation, interval calculations, and analytical views |
+| Python | Data analysis, statistical testing, and validation |
+| Pandas | Data manipulation and analysis |
+| SciPy | Statistical hypothesis testing |
+| Statsmodels | Exploratory statistical modelling, including GEE |
+| Jupyter Notebook | Statistical analysis and documentation |
+| Power BI | Interactive dashboards, KPI reporting, and visualization |
+| DAX | Measures and analytical calculations |
 
 ## Repository Structure
 
@@ -81,8 +90,14 @@ healthcare-ed-throughput/
 ├── README.md
 ├── LWBS_significance_tests.ipynb
 │
+├── dataset/
+│   ├── raw/
+│   │   └── Cleaned_ED_Visits.csv
+│   │
+│   └── processed/
+│       └── ed_visits_timestamp_corrected.csv
+│
 ├── docs/
-│   ├── ed_visits_timestamp_corrected.csv
 │   ├── lwbs_significance_results.csv
 │   └── lwbs_statistical_validation.csv
 │
@@ -99,152 +114,117 @@ healthcare-ed-throughput/
     └── Healthcare_ED_Final_Analytics.sql
 ```
 
-> The repository currently contains a patient-level CSV export. Before making the repository public, verify the dataset's source, redistribution permission, and whether the identifiers or other fields could expose sensitive information. Do not publish unauthorized or sensitive patient-level data.
+## Project Workflow
 
-## Methodology
+The project follows a structured analytics workflow:
 
-### 1. Data Validation
-
-SQL and Python checks examine:
-
-- Total visit rows and distinct visit IDs.
-- Distinct patient IDs.
-- Missing timestamps and analysis fields.
-- Chronological inconsistencies between recorded events.
-- Disposition counts.
-- Duplicate visit identifiers.
-
-### 2. Timestamp-Based Care Intervals
-
-Care intervals are calculated from recorded timestamps. Invalid or unavailable intervals are excluded from the corresponding average rather than treated as zero.
-
-| Care interval | Eligibility rule |
-|---|---|
-| Arrival → Triage | Both timestamps exist and triage is not before arrival |
-| Triage → Doctor | Required timestamps exist and follow valid chronological order |
-| Doctor → Disposition | Both timestamps exist and disposition is not before doctor seen |
-| Arrival → Disposition | Both timestamps exist and disposition is not before arrival |
-
-Each interval has its own eligible visit count. Therefore, the averages do not necessarily represent the same set of visits.
-
-**Interpretation note:** Doctor-to-disposition duration is not a validated boarding-time measure.
-
-### 3. LWBS Analysis
-
-The analysis examines recorded LWBS classifications by:
-
-- Arrival year.
-- Arrival hour.
-- Observed triage-wait band.
-- Recorded triage score.
-- Combined triage-score and wait-band categories.
-
-### 4. Statistical Analysis
-
-The notebook contains two distinct statistical workflows.
-
-**Exploratory analysis — Section 10**
-
-- Patient-clustered Generalized Estimating Equations (GEE) with a binomial family and exchangeable working correlation.
-- Pearson chi-square test for wait-band comparison.
-- Mann–Whitney U test comparing observed wait-time distributions.
-- The exploratory wait-time analysis uses the full prepared dataset, including zero-minute wait values.
-
-**Final consolidated validation — Section 12**
-
-- Pearson chi-square tests for triage score, arrival year, arrival hour, and wait band.
-- Mann–Whitney U test comparing LWBS and non-LWBS wait-time distributions.
-- Wait-time analyses use records with observed wait time greater than zero.
-- The resulting sample contains 188,144 valid wait-time records.
-
-The two workflows use different methods and wait-time eligibility rules. Their results are therefore reported separately. The Power BI statistical summary uses the final consolidated validation results from Section 12.
-
-## Key Findings
-
-### Overall LWBS
-
-| Metric | Result |
-|---|---:|
-| Total recorded visits | 200,000 |
-| LWBS-classified visits | 19,872 |
-| Overall LWBS rate | 9.94% |
-
-Approximately one in ten recorded visits is classified as LWBS in this dataset.
-
-### Observed Care Intervals
-
-| Care interval | Eligible visits | Average duration |
-|---|---:|---:|
-| Arrival → Triage | 188,144 | 32.04 minutes |
-| Triage → Doctor | 178,729 | 66.87 minutes |
-| Doctor → Disposition | 189,080 | 164.37 minutes |
-
-These averages apply only to visits eligible for each interval calculation.
-
-### LWBS Patterns
-
-| Analysis | Observed result |
-|---|---:|
-| Highest hourly LWBS rate | 10.54% at 11 AM |
-| Lowest hourly LWBS rate | 9.37% at 8 AM |
-| Hourly rate spread | 1.17 percentage points |
-| Wait-band LWBS rate range | 9.73%–10.02% |
-| Wait-band rate spread | 0.29 percentage points |
-| Annual LWBS rate range | 9.73%–10.22% |
-
-These are descriptive differences and should not be interpreted as evidence of statistically significant differences.
-
-## Statistical Analysis
-
-### Final Consolidated Validation — Section 12
-
-| Comparison | N | Statistic | df | p-value |
-|---|---:|---:|---:|---:|
-| Triage Score vs LWBS | 200,000 | 1.4002 | 4 | 0.844160 |
-| Arrival Year vs LWBS | 200,000 | 6.4177 | 6 | 0.378063 |
-| Arrival Hour vs LWBS | 200,000 | 30.6157 | 23 | 0.132529 |
-| Wait Band vs LWBS | 188,144 | 2.3306 | 3 | 0.506682 |
-| Valid wait time: LWBS vs non-LWBS | 188,144 | 1,591,636,000* | — | 0.259916 |
-
-*The Mann–Whitney U statistic is displayed rounded, as in the exported validation output.*
-
-At the 0.05 significance level, none of these final tests detected a statistically significant difference.
-
-This does not establish that the groups are identical or that the examined factors have no effect. It indicates that statistically significant differences were not detected by these tests.
-
-### Exploratory Analysis — Section 10
-
-| Comparison | Statistic | df | p-value |
-|---|---:|---:|---:|
-| Triage Score vs LWBS (GEE) | 1.389978 | 4 | 0.845935 |
-| Wait Band vs LWBS (GEE) | 1.856430 | 3 | 0.602733 |
-| Wait Band vs LWBS (Pearson) | 1.856527 | 3 | 0.602712 |
-| Arrival Year vs LWBS (GEE) | 6.420616 | 6 | 0.377757 |
-| Arrival Hour vs LWBS (GEE) | 30.854285 | 23 | 0.126415 |
-| Wait Distribution: LWBS vs non-LWBS | — | — | 0.316247 |
-
-The exploratory workflow also found no statistically significant results at the 0.05 level.
+1. **Data Preparation:** Load and inspect the available ED visit records.
+2. **Data Validation:** Check record counts, unique visit identifiers, missing timestamps, and invalid timestamp sequences.
+3. **SQL Analysis:** Build analytical views and calculate timestamp-based care intervals.
+4. **Statistical Analysis:** Evaluate LWBS patterns using appropriate statistical tests.
+5. **Python Validation:** Conduct independent statistical analysis and export supporting results.
+6. **Power BI Development:** Build interactive dashboards using validated analytical outputs.
+7. **Reconciliation:** Compare SQL results with Power BI KPI calculations.
+8. **Documentation:** Record findings, limitations, and reproducibility information.
 
 ## Data Quality Assessment
 
-| Data-quality check | Count |
+Timestamp quality is important because the operational metrics depend on valid event sequences.
+
+The validation identified the following issues:
+
+| Data Quality Check | Records |
 |---|---:|
 | Missing triage timestamp | 9,909 |
-| Triage before arrival | 1,947 |
+| Triage timestamp before arrival | 1,947 |
 | Missing doctor-seen timestamp | 10,000 |
-| Disposition before doctor seen | 920 |
-| Valid arrival-to-triage intervals | 188,144 (94.07%) |
-| Valid triage-to-doctor intervals | 178,729 (89.36%) |
+| Disposition before doctor-seen timestamp | 920 |
 
-These conditions may overlap and should not be added together to estimate a total number of affected visits.
+### Valid Timestamp Intervals
 
-### LWBS Classification Consistency
+| Care Interval | Eligible Records | Average Duration |
+|---|---:|---:|
+| Arrival to Triage | 188,144 | 32.04 minutes |
+| Triage to Doctor | 178,729 | 66.87 minutes |
+| Doctor to Disposition | 189,080 | 164.37 minutes |
 
-Of the 19,872 visits classified as LWBS, 18,871 (94.96%) have a recorded doctor-seen timestamp.
+The eligibility criteria differ by interval. Records with missing or invalid timestamps are excluded from the relevant interval calculation.
 
-This is a classification-consistency concern requiring investigation. The available data does not establish whether the timestamp or disposition label is incorrect.
+**Important:** The data-quality issue counts may overlap. They should not be added together to estimate the total number of affected visits.
 
-Disposition definitions should be verified with the data owner before using these records for operational decisions.
+## Statistical Analysis
+
+The project evaluates whether observed differences in LWBS patterns are statistically significant.
+
+The final validation uses a significance level of **5% (α = 0.05)**.
+
+### Statistical Tests and Results
+
+| Analysis | Sample Size | Test Statistic | df | P-value |
+|---|---:|---:|---:|---:|
+| Triage Score vs LWBS | 200,000 | χ² = 1.4002 | 4 | 0.844160 |
+| Arrival Year vs LWBS | 200,000 | χ² = 6.4177 | 6 | 0.378063 |
+| Arrival Hour vs LWBS | 200,000 | χ² = 30.6157 | 23 | 0.132529 |
+| Wait-Time Band vs LWBS | 188,144 | χ² = 2.3306 | 3 | 0.506682 |
+| Wait-Time Distribution: LWBS vs Non-LWBS | 188,144 | U = 1,591,636,000* | — | 0.259916 |
+
+*The Mann–Whitney U statistic is displayed in rounded form as exported in the project documentation.*
+
+### Statistical Interpretation
+
+All reported p-values are greater than 0.05. Therefore, the analysis does not detect statistically significant differences in the tested relationships at the 5% significance level.
+
+This does not prove that the groups are identical or that no relationship exists. It means the available analysis did not provide sufficient statistical evidence to reject the relevant null hypotheses.
+
+### Exploratory Analysis
+
+The notebook also contains exploratory analyses using Generalized Estimating Equations (GEE) and other statistical methods.
+
+These exploratory results use different analytical eligibility rules in some cases, including the treatment of zero-minute wait values.
+
+They are documented separately from the final validation results. The two result sets should not be treated as interchangeable.
+
+Refer to:
+
+- `LWBS_significance_tests.ipynb`
+- `docs/lwbs_significance_results.csv`
+- `docs/lwbs_statistical_validation.csv`
+
+## Key Analytical Observations
+
+### 1. Overall LWBS
+
+- Total recorded visits: 200,000.
+- LWBS visits: 19,872.
+- Overall LWBS rate: approximately 9.94%.
+
+### 2. Arrival-Hour Pattern
+
+The observed LWBS rate varies across arrival hours:
+
+- Highest observed rate: 10.54% at 11 AM.
+- Lowest observed rate: 9.37% at 8 AM.
+- Difference: 1.17 percentage points.
+
+The statistical test did not detect a significant association between arrival hour and LWBS at the 5% significance level.
+
+### 3. Wait-Time Categories
+
+The observed LWBS rate across wait-time categories ranges from approximately 9.73% to 10.02%, a spread of 0.29 percentage points.
+
+The statistical test did not detect a significant association between wait-time category and LWBS.
+
+### 4. Annual Pattern
+
+The observed annual LWBS rate ranges from approximately 9.73% to 10.22%.
+
+The statistical test did not detect a significant association between arrival year and LWBS.
+
+### 5. Timestamp and Classification Limitations
+
+A notable data-quality observation is that 18,871 of the 19,872 records classified as LWBS contain a doctor-seen timestamp.
+
+This requires further investigation into the source data's classification rules and event definitions. It is documented as a validation concern, not automatically treated as proof of incorrect classification.
 
 ## Power BI Dashboard
 
@@ -252,132 +232,139 @@ The Power BI report contains four analytical pages.
 
 ### 1. Executive Overview
 
-Presents overall visit volume, LWBS rate, yearly trends, and disposition mix.
+Provides a high-level view of ED performance, including:
+
+- Total visits
+- LWBS visits and rate
+- Patient disposition distribution
+- Key operational indicators
 
 ![Executive Overview](screenshots/executive-overview.jpg)
 
 ### 2. Patient Flow
 
-Presents observed care intervals, average durations, eligible visit counts, and interval coverage.
+Examines the patient journey through the ED process and summarizes timestamp-based care intervals.
 
 ![Patient Flow](screenshots/patient-flow.jpg)
 
 ### 3. LWBS Deep Dive
 
-Examines LWBS patterns by arrival hour, observed triage-wait band, and recorded triage score.
+Explores LWBS patterns across arrival hours, years, wait-time categories, and triage scores.
 
 ![LWBS Deep Dive](screenshots/lwbs-deep-dive.jpg)
 
-### 4. Data Quality & Limits
+### 4. Data Quality and Limitations
 
-Summarizes timestamp-quality issues, interval eligibility, LWBS classification consistency, and statistical limitations.
+Highlights missing timestamps, invalid event sequences, data-quality concerns, and analytical limitations.
 
 ![Data Quality and Limits](screenshots/data-quality-limits.jpg)
 
 ## SQL and Power BI Reconciliation
 
-The SQL interval results match the reported Power BI values when the same eligibility rules are applied.
+SQL Server is used as the primary analytical layer for the timestamp-based interval calculations.
 
-| Interval | SQL eligible count | SQL average | Power BI average |
-|---|---:|---:|---:|
-| Arrival → Triage | 188,144 | 32.04 min | 32.04 min |
-| Triage → Doctor | 178,729 | 66.87 min | 66.87 min |
-| Doctor → Disposition | 189,080 | 164.37 min | 164.37 min |
+The corresponding Power BI measures and report outputs are checked against the SQL results to maintain consistency.
 
-Reconciliation should be repeated whenever SQL definitions or Power BI measures change.
+The reconciliation covers:
 
-## How to Reproduce
+- Eligible record counts
+- Average care interval durations
+- LWBS counts and rates
+- Analytical filtering and eligibility criteria
+
+The objective is to ensure that the dashboard reflects the validated analytical outputs rather than independent or inconsistent calculations.
+
+## How to Reproduce the Analysis
 
 ### Prerequisites
 
-- SQL Server 2016 or later.
-- SQL Server Management Studio.
-- Power BI Desktop.
-- Python and Jupyter Notebook.
-- Python packages: Pandas, NumPy, SciPy, and Statsmodels.
+- Microsoft SQL Server
+- SQL Server Management Studio (SSMS)
+- Python 3.x
+- Jupyter Notebook
+- Required Python packages
+- Microsoft Power BI Desktop
 
-### Step 1: Prepare the Database
+### Step 1: Set Up the Database
 
-Create or select the `Healthcare_Project` database and load the source table as `dbo.Cleaned_ED_Visits`.
+1. Create or select the SQL Server database `Healthcare_Project`.
+2. Import the raw dataset from:
 
-The source schema must contain the visit, patient, timestamp, disposition, and triage-score fields referenced by the SQL script.
+   `dataset/raw/Cleaned_ED_Visits.csv`
 
-### Step 2: Run the SQL Script
+3. Ensure that the source table is available as:
 
-1. Open `sql/Healthcare_ED_Final_Analytics.sql` in SQL Server Management Studio.
-2. Confirm the database name and source table.
-3. Execute the script.
-4. Review the validation outputs and analytical views.
-5. Verify the interval counts and averages.
+   `dbo.Cleaned_ED_Visits`
 
-### Step 3: Prepare the Statistical Analysis
+4. Open and execute:
 
-Export the required columns from the analytical view:
+   `sql/Healthcare_ED_Final_Analytics.sql`
 
-```sql
-SELECT
-    Visit_ID,
-    Patient_ID,
-    Arrival_Timestamp,
-    Disposition_Type,
-    Observed_Triage_Wait_Minutes,
-    Triage_Score
-FROM dbo.vw_Observed_Visit_Intervals;
+5. Review the generated analytical views and validation results.
+
+### Step 2: Prepare the Processed Dataset
+
+Follow the SQL workflow and export the required processed analytical data to:
+
+`dataset/processed/ed_visits_timestamp_corrected.csv`
+
+Use this same path when loading the processed dataset into the Python notebook.
+
+### Step 3: Run the Statistical Notebook
+
+Open:
+
+`LWBS_significance_tests.ipynb`
+
+Install the required Python packages if necessary:
+
+```bash
+pip install pandas scipy statsmodels numpy matplotlib seaborn jupyter
 ```
 
-Place the approved dataset at:
+Run the notebook cells in sequence and review the statistical outputs.
 
-`docs/ed_visits_timestamp_corrected.csv`
+### Step 4: Review the Statistical Results
 
-The notebook uses a project-relative path:
+Compare the notebook outputs with the exported CSV files in:
 
-```python
-from pathlib import Path
+`docs/`
 
-PROJECT_ROOT = Path.cwd()
-FILE_PATH = PROJECT_ROOT / "docs" / "ed_visits_timestamp_corrected.csv"
-```
+The exported results provide supporting documentation for the statistical analysis.
 
-Open `LWBS_significance_tests.ipynb` from the project root and execute the notebook cells in order.
+### Step 5: Open the Power BI Report
 
-### Step 4: Open the Power BI Report
+Open:
 
-1. Open `report/Healthcare_ED_Final_Analytics.pbix`.
-2. Configure the data source connection for your environment.
-3. Refresh the report.
-4. Compare interval measures and eligible counts against the SQL results.
+`report/Healthcare_ED_Final_Analytics.pbix`
 
-### Step 5: Validate the Final Outputs
+If prompted, update the data-source paths to match the local dataset and database configuration.
 
-Confirm that:
+Refresh the report and review the four dashboard pages.
 
-- Notebook results match the documented statistical outputs.
-- SQL interval counts and averages match Power BI.
-- Screenshots represent the final dashboard version.
-- README figures match the final validation outputs.
+## Project Limitations
 
-## Limitations
+The following limitations are important when interpreting the results:
 
-- The original dataset source and license have not been verified.
-- The dataset may be simulated and may not represent real emergency department operations.
-- Missing and out-of-sequence timestamps limit eligible observations for interval calculations.
-- The LWBS label and doctor-seen timestamp combination requires clarification.
-- Triage-score meanings and direction have not been independently confirmed.
-- Arrival-to-disposition duration is not validated as boarding time.
-- Bed occupancy cannot be established from visit counts alone.
-- Staffing effects, revenue loss, and causal improvements have not been estimated.
-- Statistical non-significance does not establish equivalence or the absence of an effect.
+1. **Dataset provenance:** The original dataset source and redistribution license have not been verified.
+2. **Timestamp completeness:** Missing and invalid timestamps reduce the number of eligible records for some interval calculations.
+3. **LWBS classification:** Some records classified as LWBS contain doctor-seen timestamps. The source classification logic requires further investigation.
+4. **Triage interpretation:** The meaning and direction of the triage score have not been independently verified.
+5. **Boarding measurement:** Arrival-to-disposition time is not a validated measure of patient boarding.
+6. **Bed occupancy:** Bed occupancy cannot be calculated reliably from visit counts alone. Bed-level occupancy and capacity data would be required.
+7. **Financial impact:** No financial loss or revenue impact is estimated because validated financial data is unavailable.
+8. **Causality:** The statistical analysis identifies patterns and associations; it does not establish causal relationships.
+9. **Statistical interpretation:** A p-value greater than 0.05 does not prove that no effect or relationship exists.
 
-The findings should be treated as a demonstration of analytical methods and reporting practices rather than clinical or operational recommendations.
+## Conclusion
 
-## Future Improvements
+This project demonstrates an end-to-end healthcare analytics workflow combining SQL Server, Python, statistical testing, and Power BI.
 
-- Obtain a dataset with a verified source, license, and documented field definitions.
-- Confirm the meaning of triage scores and disposition categories.
-- Investigate the LWBS classification consistency concern.
-- Validate timestamp definitions and interval eligibility with subject-matter experts.
-- Add appropriate staffing, bed, and capacity data before investigating those operational questions.
-- Repeat the analysis using verified real-world data and assess whether findings generalize.
+It focuses on patient flow, timestamp-based care intervals, LWBS patterns, statistical validation, and data-quality assessment.
+
+Beyond dashboard development, the project emphasizes analytical reliability, SQL–Power BI reconciliation, transparent reporting, and responsible interpretation of healthcare data.
+
+The findings provide a structured view of the available dataset while clearly identifying areas where additional source information would be required for stronger operational conclusions.
 
 ## Author
 
@@ -385,6 +372,6 @@ The findings should be treated as a demonstration of analytical methods and repo
 
 Data Analyst | SQL Server | Power BI | Python
 
-- [GitHub](https://github.com/prasobh-r)
-- [LinkedIn](https://linkedin.com/in/prasobh04)
-- [Portfolio](https://prasobh-r.github.io/portfolio-website/)
+- GitHub: https://github.com/prasobh-r
+- LinkedIn: https://www.linkedin.com/in/prasobh04
+- Portfolio: https://prasobh-r.github.io/portfolio-website/
