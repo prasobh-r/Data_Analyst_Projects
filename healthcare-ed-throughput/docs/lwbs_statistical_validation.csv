@@ -1,0 +1,6 @@
+Test,N,Statistic,df,p_value,Conclusion_at_0.05
+Triage_Score vs LWBS,200000,1.4002,4.0,0.84416,Not statistically significant
+Arrival_Year vs LWBS,200000,6.4177,6.0,0.378063,Not statistically significant
+Arrival_Hour vs LWBS,200000,30.6157,23.0,0.132529,Not statistically significant
+Wait_Band vs LWBS,188144,2.3306,3.0,0.506682,Not statistically significant
+Valid wait time: LWBS vs non-LWBS,188144,1591636206.0,,0.259916,Not statistically significant
