@@ -1,0 +1,73 @@
+item_id,item_name_raw,item_name_clean,item_group,unit
+1,Rice(red)open market  Matta (Kg.),Rice(red)open market Matta,Cereals,Kg
+2,Rice(red)open market  Rose (Kg.),Rice(red)open market Rose,Cereals,Kg
+3,Rice(white)open mrkt  Andhra Vella (Kg.),Rice(white)open mrkt Andhra Vella,Cereals,Kg
+4,Green gram (Kg),Green gram,Pulses,Kg
+5,Green gram Dhal (Kg.),Green gram Dhal,Pulses,Kg
+6,Black gram  split w/o husk (Kg),Black gram split w/o husk,Pulses,Kg
+7,Black gram  with out husk (Kg),Black gram with out husk,Pulses,Kg
+8,Redgram (Kg.),Redgram,Pulses,Kg
+9,Dhall(Tur) (Kg),Dhall(Tur),Pulses,Kg
+10,Bengalgram  Bold (Kg),Bengalgram Bold,Pulses,Kg
+11,Sugar(O.M) (Kg.),Sugar(O.M),Other Food Items,Kg
+12,Canegur (Kg.),Canegur,Other Food Items,Kg
+13,Milk  (Milma) (Ltr.),Milk (Milma),Other Food Items,Ltr
+14,Egg  Hen's (Nadan) (Dozen),Egg Hen's (Nadan),Other Food Items,Dozen
+15,Egg  Hen's (White lagon) (Dozen),Egg Hen's (White lagon),Other Food Items,Dozen
+16,Coconut oil(Loose) (Kg),Coconut oil(Loose),Oil And Oil  Seeds,Kg
+17,Gingelly oil(Pavithram) (Ltr.),Gingelly oil(Pavithram),Oil And Oil  Seeds,Ltr
+18,Gingelly oil(Swrnam) (Ltr.),Gingelly oil(Swrnam),Oil And Oil  Seeds,Ltr
+19,Vanaspathi  (Dalda) (Ltr.),Vanaspathi (Dalda),Oil And Oil  Seeds,Ltr
+20,Coconut without Husk (Kg),Coconut without Husk,Oil And Oil  Seeds,Kg
+21,Coriandar (Kg.),Coriandar,Spices And Condiments,Kg
+22,Chillies dry (Kg.),Chillies dry,Spices And Condiments,Kg
+23,Onion small (Kg.),Onion small,Spices And Condiments,Kg
+24,Tamarind  without seeds loose (Kg.),Tamarind without seeds loose,Spices And Condiments,Kg
+25,Cuminseed (100gm),Cuminseed,Spices And Condiments,100gm
+26,Mustard (100gm),Mustard,Spices And Condiments,100gm
+27,Methy (100gm),Methy,Spices And Condiments,100gm
+28,Turmeric(Powder) (100gm),Turmeric(Powder),Spices And Condiments,100gm
+29,Garlic (100gm),Garlic,Spices And Condiments,100gm
+30,Chenai (Kg.),Chenai,Tubers,Kg
+31,Tapioca  Raw (Kg.),Tapioca Raw,Tubers,Kg
+32,Potato (Kg.),Potato,Tubers,Kg
+33,Colocassia (Kg.),Colocassia,Tubers,Kg
+34,Beetroot (Kg.),Beetroot,Tubers,Kg
+35,Carrot (Kg.),Carrot,Tubers,Kg
+36,Onion big (Kg.),Onion big,Fruits And Vegetables,Kg
+37,Brinjal (Kg.),Brinjal,Fruits And Vegetables,Kg
+38,Pumpkin (Kg.),Pumpkin,Fruits And Vegetables,Kg
+39,Cucumber (Kg.),Cucumber,Fruits And Vegetables,Kg
+40,Ladies Finger (Kg.),Ladies Finger,Fruits And Vegetables,Kg
+41,Beans  English (Kg.),Beans English,Fruits And Vegetables,Kg
+42,Beans Nadan (amarakka/kothavara) (Kg.),Beans Nadan (amarakka/kothavara),Fruits And Vegetables,Kg
+43,BeansNadan(Vallippayar) (Kg.),BeansNadan(Vallippayar),Fruits And Vegetables,Kg
+44,Cabbage (Kg.),Cabbage,Fruits And Vegetables,Kg
+45,Bittergourd (Kg.),Bittergourd,Fruits And Vegetables,Kg
+46,Ash gourd (Kg.),Ash gourd,Fruits And Vegetables,Kg
+47,Snake gourd (Kg.),Snake gourd,Fruits And Vegetables,Kg
+48,Tomato (Kg.),Tomato,Fruits And Vegetables,Kg
+49,Chillies green (100gm),Chillies green,Fruits And Vegetables,100gm
+50,Banana green (Kg.),Banana green,Fruits And Vegetables,Kg
+51,Plantain green (Kg.),Plantain green,Fruits And Vegetables,Kg
+52,Rice(red)open market  Nadan (Kg.),Rice(red)open market Nadan,Cereals,Kg
+53,Bengalgram  small (Kg),Bengalgram small,Pulses,Kg
+54,Coconut oil( Kera) (Ltr.),Coconut oil( Kera),Oil And Oil  Seeds,Ltr
+55,Refined Oil (Gold Winner) (Ltr.),Refined Oil (Gold Winner),Oil And Oil  Seeds,Ltr
+56,Coconut  without husk (10 nos),Coconut without husk,Oil And Oil  Seeds,10 Nos
+57,Peas Dhal (Kg.),Peas Dhal,Pulses,Kg
+58,Palmgur (Kg.),Palmgur,Other Food Items,Kg
+59,BeansNadan(Achingapayar) (Kg.),BeansNadan(Achingapayar),Fruits And Vegetables,Kg
+60,Mustard oil(Fortune) (Ltr.),Mustard oil(Fortune),Oil And Oil  Seeds,Ltr
+61,Rice(red)open market  Massoori (Kg.),Rice(red)open market Massoori,Cereals,Kg
+62,Rice(white)open mrkt  Nepal Vella (Kg.),Rice(white)open mrkt Nepal Vella,Cereals,Kg
+63,Rice(white)open mrkt  Palakkadan Jaya (Kg.),Rice(white)open mrkt Palakkadan Jaya,Cereals,Kg
+64,Groundnut oil(Loose) (Ltr. ),Groundnut oil(Loose),Oil And Oil  Seeds,Ltr
+65,Mustard oil(Dhara) (Ltr.),Mustard oil(Dhara),Oil And Oil  Seeds,Ltr
+66,Black gram  split with husk (Kg),Black gram split with husk,Pulses,Kg
+67,Gingelly oil(Idayam) (Ltr.),Gingelly oil(Idayam),Oil And Oil  Seeds,Ltr
+68,Groundnut oil(Dhara) (Ltr.),Groundnut oil(Dhara),Oil And Oil  Seeds,Ltr
+69,Rice(red)open market  Chamba (Kg.),Rice(red)open market Chamba,Cereals,Kg
+70,Coconut oil( KLF Nirmal) (Ltr.),Coconut oil( KLF Nirmal),Oil And Oil  Seeds,Ltr
+71,Rice(white)open mrkt  Mysore Vella (Kg.),Rice(white)open mrkt Mysore Vella,Cereals,Kg
+72,Groundnut oil(Gold winner) (Ltr.),Groundnut oil(Gold winner),Oil And Oil  Seeds,Ltr
