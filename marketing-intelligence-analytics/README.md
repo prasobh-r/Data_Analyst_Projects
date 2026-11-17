@@ -87,7 +87,7 @@ Missing income is uneven by country: Australia 13 of 160 customers (8.1%), Germa
 
 Row reconciliation (2,240 = 2,193 + 47), spend and campaign acceptances reconcile to the raw table, no duplicates remain, untouched columns are identical to raw, and income and birth-year checks use NULL-aware comparisons so a value wrongly turned into NULL would be caught.
 
-![Validation results](screenshots/03_validation_results.png)
+![Validation results](screenshots/03_validation_results_new.png)
 
 | Metric | Raw | Cleaned |
 |---|---|---|
@@ -172,7 +172,7 @@ Both campaigns cover the same customers, so Campaign 1 vs 2 uses McNemar's paire
 
 | Step | Output |
 |---|---|
-| Profiling | ![Profiling](screenshots/01_profiling_summary.png) |
+| Profiling | ![Profiling](screenshots/01_profiling_summary_new.png) |
 | Before and after | ![Before and after](screenshots/03_before_after_summary.png) |
 | RFM sensitivity | ![RFM sensitivity](screenshots/04_rfm_sensitivity.png) |
 | Customer value | ![Customer value](screenshots/05_customer_value.png) |
