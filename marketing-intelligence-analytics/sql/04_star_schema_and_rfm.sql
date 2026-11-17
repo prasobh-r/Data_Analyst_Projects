@@ -37,6 +37,8 @@ CREATE TABLE dbo.DimCustomer (
 GO
 
 INSERT INTO dbo.DimCustomer
+    (Customer_ID, Year_Birth, Education, Marital_Status, Income, Kidhome, Teenhome,
+     Dt_Customer, Country, Complain, Birth_Year_Flag, Income_Flag)
 SELECT ID, Year_Birth, Education, Marital_Status, Income, Kidhome, Teenhome,
        Dt_Customer, Country, CAST(Complain AS INT), Birth_Year_Flag, Income_Flag
 FROM dbo.marketing_data_cleaned;
@@ -68,6 +70,9 @@ CREATE TABLE dbo.FactPurchases (
 GO
 
 INSERT INTO dbo.FactPurchases
+    (Customer_ID, Recency, MntWines, MntFruits, MntMeatProducts, MntFishProducts, MntSweetProducts,
+     MntGoldProds, Total_Spend, NumDealsPurchases, NumWebPurchases, NumCatalogPurchases,
+     NumStorePurchases, Total_Purchases, NumWebVisitsMonth, Purchase_Consistency_Flag)
 SELECT ID, Recency, MntWines, MntFruits, MntMeatProducts, MntFishProducts, MntSweetProducts, MntGoldProds,
        MntWines + MntFruits + MntMeatProducts + MntFishProducts + MntSweetProducts + MntGoldProds,
        NumDealsPurchases, NumWebPurchases, NumCatalogPurchases, NumStorePurchases,
@@ -147,9 +152,9 @@ GO
 SELECT
     Customer_Segment,
     COUNT(*) AS Customer_Count,
-    ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 2) AS Pct_Of_Customers,
-    ROUND(AVG(CAST(Monetary AS DECIMAL(18,2))), 2) AS Avg_Spend,
-    ROUND(100.0 * SUM(Monetary) / SUM(SUM(Monetary)) OVER (), 2) AS Pct_Of_Revenue
+    CAST(ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 2) AS DECIMAL(18,2)) AS Pct_Of_Customers,
+    CAST(ROUND(AVG(CAST(Monetary AS DECIMAL(18,2))), 2) AS DECIMAL(18,2)) AS Avg_Spend,
+    CAST(ROUND(100.0 * SUM(Monetary) / SUM(SUM(Monetary)) OVER (), 2) AS DECIMAL(18,2)) AS Pct_Of_Revenue
 FROM dbo.RFM_Results
 GROUP BY Customer_Segment
 ORDER BY CASE Customer_Segment
@@ -195,12 +200,12 @@ SELECT
     a.Pct_Revenue_All, b.Pct_Revenue_Excl_Flagged
 FROM (
     SELECT Customer_Segment, COUNT(*) AS Customers_All,
-           ROUND(100.0 * SUM(Monetary) / SUM(SUM(Monetary)) OVER (), 2) AS Pct_Revenue_All
+           CAST(ROUND(100.0 * SUM(Monetary) / SUM(SUM(Monetary)) OVER (), 2) AS DECIMAL(18,2)) AS Pct_Revenue_All
     FROM dbo.RFM_Results GROUP BY Customer_Segment
 ) a
 JOIN (
     SELECT Customer_Segment, COUNT(*) AS Customers_Excl_Flagged,
-           ROUND(100.0 * SUM(Monetary) / SUM(SUM(Monetary)) OVER (), 2) AS Pct_Revenue_Excl_Flagged
+           CAST(ROUND(100.0 * SUM(Monetary) / SUM(SUM(Monetary)) OVER (), 2) AS DECIMAL(18,2)) AS Pct_Revenue_Excl_Flagged
     FROM dbo.RFM_Results_Excl_Flagged GROUP BY Customer_Segment
 ) b ON a.Customer_Segment = b.Customer_Segment
 ORDER BY CASE a.Customer_Segment

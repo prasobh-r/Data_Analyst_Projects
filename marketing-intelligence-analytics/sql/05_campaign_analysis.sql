@@ -21,7 +21,7 @@ GO
 SELECT Campaign_Name,
        COUNT(*)      AS Customers,
        SUM(Accepted) AS Accepted,
-       ROUND(100.0 * SUM(Accepted) / COUNT(*), 2) AS Acceptance_Rate_Pct
+       CAST(ROUND(100.0 * SUM(Accepted) / COUNT(*), 2) AS DECIMAL(18,2)) AS Acceptance_Rate_Pct
 FROM dbo.FactCampaignResponse
 GROUP BY Campaign_Name
 ORDER BY Acceptance_Rate_Pct DESC;
@@ -52,8 +52,8 @@ Counts AS (
     FROM Pairs
 )
 SELECT Both_Accepted, Campaign1_Only, Campaign2_Only, Neither,
-       ROUND(POWER(ABS(Campaign1_Only - Campaign2_Only) - 1.0, 2)
-             / (Campaign1_Only + Campaign2_Only), 2) AS McNemar_Chi_Square
+       CAST(ROUND(POWER(ABS(Campaign1_Only - Campaign2_Only) - 1.0, 2)
+             / (Campaign1_Only + Campaign2_Only), 2) AS DECIMAL(18,2)) AS McNemar_Chi_Square
 FROM Counts;
 GO
 
@@ -67,7 +67,7 @@ GO
 SELECT r.Customer_Segment,
        COUNT(*)        AS Customers,
        SUM(f.Accepted) AS Accepted_Final,
-       ROUND(100.0 * SUM(f.Accepted) / COUNT(*), 2) AS Acceptance_Rate_Pct
+       CAST(ROUND(100.0 * SUM(f.Accepted) / COUNT(*), 2) AS DECIMAL(18,2)) AS Acceptance_Rate_Pct
 FROM dbo.RFM_Results r
 JOIN dbo.FactCampaignResponse f
   ON f.Customer_ID = r.Customer_ID AND f.Campaign_Name = 'CampaignFinal'
@@ -89,7 +89,7 @@ WITH Resp AS (
 )
 SELECT CASE WHEN r.Any_Accepted = 1 THEN 'Accepted at least 1 campaign' ELSE 'Never accepted' END AS Customer_Group,
        COUNT(*) AS Customers,
-       ROUND(AVG(CAST(p.Total_Spend AS DECIMAL(18,2))), 2) AS Avg_Spend
+       CAST(ROUND(AVG(CAST(p.Total_Spend AS DECIMAL(18,2))), 2) AS DECIMAL(18,2)) AS Avg_Spend
 FROM Resp r
 JOIN dbo.FactPurchases p ON p.Customer_ID = r.Customer_ID
 GROUP BY r.Any_Accepted
@@ -110,7 +110,7 @@ WITH Ranked AS (
     FROM dbo.FactPurchases
 )
 SELECT COUNT(*) AS Customers_To_Reach_80_Pct_Of_Revenue,
-       ROUND(100.0 * COUNT(*) / (SELECT COUNT(*) FROM dbo.FactPurchases), 2) AS Pct_Of_Customers
+       CAST(ROUND(100.0 * COUNT(*) / (SELECT COUNT(*) FROM dbo.FactPurchases), 2) AS DECIMAL(18,2)) AS Pct_Of_Customers
 FROM Ranked
 WHERE Running_Spend - Total_Spend < 0.8 * Grand_Total;
 GO
@@ -121,15 +121,15 @@ GO
 -- Expect overall: Web 8982 (32.66%), Catalog 5834 (21.21%), Store 12686 (46.13%)
 -- ----------------------------------------------------------------
 SELECT N'Web' AS Channel, SUM(NumWebPurchases) AS Purchases,
-       ROUND(100.0 * SUM(NumWebPurchases) / SUM(NumWebPurchases + NumCatalogPurchases + NumStorePurchases), 2) AS Pct_Of_Purchases
+       CAST(ROUND(100.0 * SUM(NumWebPurchases) / SUM(NumWebPurchases + NumCatalogPurchases + NumStorePurchases), 2) AS DECIMAL(18,2)) AS Pct_Of_Purchases
 FROM dbo.FactPurchases
 UNION ALL
 SELECT N'Catalog', SUM(NumCatalogPurchases),
-       ROUND(100.0 * SUM(NumCatalogPurchases) / SUM(NumWebPurchases + NumCatalogPurchases + NumStorePurchases), 2)
+       CAST(ROUND(100.0 * SUM(NumCatalogPurchases) / SUM(NumWebPurchases + NumCatalogPurchases + NumStorePurchases), 2) AS DECIMAL(18,2))
 FROM dbo.FactPurchases
 UNION ALL
 SELECT N'Store', SUM(NumStorePurchases),
-       ROUND(100.0 * SUM(NumStorePurchases) / SUM(NumWebPurchases + NumCatalogPurchases + NumStorePurchases), 2)
+       CAST(ROUND(100.0 * SUM(NumStorePurchases) / SUM(NumWebPurchases + NumCatalogPurchases + NumStorePurchases), 2) AS DECIMAL(18,2))
 FROM dbo.FactPurchases;
 GO
 
@@ -137,9 +137,9 @@ GO
 -- Expect Catalog %: Champion 27.3, Loyal 23.8, Potential 14.7, At Risk 8.4, Lost 3.1
 --        Store %:   Champion 42.8, Loyal 44.2, Potential 48.3, At Risk 58.3, Lost 68.1
 SELECT r.Customer_Segment,
-       ROUND(100.0 * SUM(p.NumWebPurchases)     / SUM(p.NumWebPurchases + p.NumCatalogPurchases + p.NumStorePurchases), 1) AS Web_Pct,
-       ROUND(100.0 * SUM(p.NumCatalogPurchases) / SUM(p.NumWebPurchases + p.NumCatalogPurchases + p.NumStorePurchases), 1) AS Catalog_Pct,
-       ROUND(100.0 * SUM(p.NumStorePurchases)   / SUM(p.NumWebPurchases + p.NumCatalogPurchases + p.NumStorePurchases), 1) AS Store_Pct
+       CAST(ROUND(100.0 * SUM(p.NumWebPurchases)     / SUM(p.NumWebPurchases + p.NumCatalogPurchases + p.NumStorePurchases), 1) AS DECIMAL(18,1)) AS Web_Pct,
+       CAST(ROUND(100.0 * SUM(p.NumCatalogPurchases) / SUM(p.NumWebPurchases + p.NumCatalogPurchases + p.NumStorePurchases), 1) AS DECIMAL(18,1)) AS Catalog_Pct,
+       CAST(ROUND(100.0 * SUM(p.NumStorePurchases)   / SUM(p.NumWebPurchases + p.NumCatalogPurchases + p.NumStorePurchases), 1) AS DECIMAL(18,1)) AS Store_Pct
 FROM dbo.RFM_Results r
 JOIN dbo.FactPurchases p ON p.Customer_ID = r.Customer_ID
 GROUP BY r.Customer_Segment
@@ -172,9 +172,9 @@ GO
 -- ----------------------------------------------------------------
 SELECT d.Country,
        COUNT(*) AS Customers,
-       ROUND(100.0 * SUM(p.Total_Spend) / SUM(SUM(p.Total_Spend)) OVER (), 2) AS Pct_Of_Spend,
-       ROUND(AVG(CAST(p.Total_Spend AS DECIMAL(18,2))), 2) AS Avg_Spend,
-       ROUND(100.0 * SUM(f.Accepted) / COUNT(*), 2) AS Final_Acceptance_Pct
+       CAST(ROUND(100.0 * SUM(p.Total_Spend) / SUM(SUM(p.Total_Spend)) OVER (), 2) AS DECIMAL(18,2)) AS Pct_Of_Spend,
+       CAST(ROUND(AVG(CAST(p.Total_Spend AS DECIMAL(18,2))), 2) AS DECIMAL(18,2)) AS Avg_Spend,
+       CAST(ROUND(100.0 * SUM(f.Accepted) / COUNT(*), 2) AS DECIMAL(18,2)) AS Final_Acceptance_Pct
 FROM dbo.DimCustomer d
 JOIN dbo.FactPurchases p ON p.Customer_ID = d.Customer_ID
 JOIN dbo.FactCampaignResponse f ON f.Customer_ID = d.Customer_ID AND f.Campaign_Name = 'CampaignFinal'

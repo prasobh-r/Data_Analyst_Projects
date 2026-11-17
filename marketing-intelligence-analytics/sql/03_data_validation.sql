@@ -171,7 +171,8 @@ ORDER BY Check_No;
 GO
 
 -- ----------------------------------------------------------------
--- PART B: BEFORE / AFTER QUALITY SUMMARY (screenshot this for the README)
+-- PART B: BEFORE / AFTER QUALITY SUMMARY
+-- Values are formatted text so counts show no decimals and averages show 2 decimals.
 -- Expect (Raw -> Cleaned):
 --   Rows 2240 -> 2193 | Suspected duplicate rows 47 -> 0 | Birth years < 1920: 3 -> 0
 --   NULL Income 24 -> 25 (the outlier became NULL) | Max Income 666666 -> 162397
@@ -201,39 +202,39 @@ SELECT @clean_dups2 = Actual FROM dbo.data_validation_results WHERE Check_No = 3
 SELECT Metric, Raw_Table, Cleaned_Table
 FROM (
     SELECT 1 AS Sort_No, N'Rows' AS Metric,
-           CAST((SELECT COUNT(*) FROM dbo.marketing_data) AS DECIMAL(18,2)) AS Raw_Table,
-           CAST((SELECT COUNT(*) FROM dbo.marketing_data_cleaned) AS DECIMAL(18,2)) AS Cleaned_Table
+           FORMAT((SELECT COUNT(*) FROM dbo.marketing_data), 'N0', 'en-US') AS Raw_Table,
+           FORMAT((SELECT COUNT(*) FROM dbo.marketing_data_cleaned), 'N0', 'en-US') AS Cleaned_Table
     UNION ALL SELECT 2, N'Suspected duplicate rows (all attributes except ID)',
-           CAST(@raw_dups AS DECIMAL(18,2)), CAST(@clean_dups2 AS DECIMAL(18,2))
+           FORMAT(@raw_dups, 'N0', 'en-US'), FORMAT(@clean_dups2, 'N0', 'en-US')
     UNION ALL SELECT 3, N'Birth years before 1920',
-           (SELECT COUNT(*) FROM dbo.marketing_data WHERE Year_Birth < 1920),
-           (SELECT COUNT(*) FROM dbo.marketing_data_cleaned WHERE Year_Birth < 1920)
+           FORMAT((SELECT COUNT(*) FROM dbo.marketing_data WHERE Year_Birth < 1920), 'N0', 'en-US'),
+           FORMAT((SELECT COUNT(*) FROM dbo.marketing_data_cleaned WHERE Year_Birth < 1920), 'N0', 'en-US')
     UNION ALL SELECT 4, N'Income = NULL',
-           (SELECT COUNT(*) FROM dbo.marketing_data WHERE Income IS NULL),
-           (SELECT COUNT(*) FROM dbo.marketing_data_cleaned WHERE Income IS NULL)
+           FORMAT((SELECT COUNT(*) FROM dbo.marketing_data WHERE Income IS NULL), 'N0', 'en-US'),
+           FORMAT((SELECT COUNT(*) FROM dbo.marketing_data_cleaned WHERE Income IS NULL), 'N0', 'en-US')
     UNION ALL SELECT 5, N'Maximum Income',
-           (SELECT MAX(Income) FROM dbo.marketing_data),
-           (SELECT MAX(Income) FROM dbo.marketing_data_cleaned)
+           FORMAT((SELECT MAX(Income) FROM dbo.marketing_data), 'N0', 'en-US'),
+           FORMAT((SELECT MAX(Income) FROM dbo.marketing_data_cleaned), 'N0', 'en-US')
     UNION ALL SELECT 6, N'Average Income',
-           (SELECT AVG(CAST(Income AS DECIMAL(18,2))) FROM dbo.marketing_data),
-           (SELECT AVG(CAST(Income AS DECIMAL(18,2))) FROM dbo.marketing_data_cleaned)
+           FORMAT((SELECT AVG(CAST(Income AS DECIMAL(18,2))) FROM dbo.marketing_data), 'N2', 'en-US'),
+           FORMAT((SELECT AVG(CAST(Income AS DECIMAL(18,2))) FROM dbo.marketing_data_cleaned), 'N2', 'en-US')
     UNION ALL SELECT 7, N'Distinct Marital_Status labels',
-           (SELECT COUNT(DISTINCT Marital_Status) FROM dbo.marketing_data),
-           (SELECT COUNT(DISTINCT Marital_Status) FROM dbo.marketing_data_cleaned)
+           FORMAT((SELECT COUNT(DISTINCT Marital_Status) FROM dbo.marketing_data), 'N0', 'en-US'),
+           FORMAT((SELECT COUNT(DISTINCT Marital_Status) FROM dbo.marketing_data_cleaned), 'N0', 'en-US')
     UNION ALL SELECT 8, N'Non-standard marital labels (Alone, YOLO, Absurd)',
-           (SELECT COUNT(*) FROM dbo.marketing_data WHERE Marital_Status IN (N'Alone', N'YOLO', N'Absurd')),
-           (SELECT COUNT(*) FROM dbo.marketing_data_cleaned WHERE Marital_Status IN (N'Alone', N'YOLO', N'Absurd'))
+           FORMAT((SELECT COUNT(*) FROM dbo.marketing_data WHERE Marital_Status IN (N'Alone', N'YOLO', N'Absurd')), 'N0', 'en-US'),
+           FORMAT((SELECT COUNT(*) FROM dbo.marketing_data_cleaned WHERE Marital_Status IN (N'Alone', N'YOLO', N'Absurd')), 'N0', 'en-US')
     UNION ALL SELECT 9, N'Total spend (currency units not stated in source)',
-           (SELECT SUM(CAST(MntWines + MntFruits + MntMeatProducts + MntFishProducts + MntSweetProducts + MntGoldProds AS BIGINT)) FROM dbo.marketing_data),
-           (SELECT SUM(CAST(MntWines + MntFruits + MntMeatProducts + MntFishProducts + MntSweetProducts + MntGoldProds AS BIGINT)) FROM dbo.marketing_data_cleaned)
+           FORMAT((SELECT SUM(CAST(MntWines + MntFruits + MntMeatProducts + MntFishProducts + MntSweetProducts + MntGoldProds AS BIGINT)) FROM dbo.marketing_data), 'N0', 'en-US'),
+           FORMAT((SELECT SUM(CAST(MntWines + MntFruits + MntMeatProducts + MntFishProducts + MntSweetProducts + MntGoldProds AS BIGINT)) FROM dbo.marketing_data_cleaned), 'N0', 'en-US')
     UNION ALL SELECT 10, N'Average spend per customer',
-           (SELECT AVG(CAST(MntWines + MntFruits + MntMeatProducts + MntFishProducts + MntSweetProducts + MntGoldProds AS DECIMAL(18,2))) FROM dbo.marketing_data),
-           (SELECT AVG(CAST(MntWines + MntFruits + MntMeatProducts + MntFishProducts + MntSweetProducts + MntGoldProds AS DECIMAL(18,2))) FROM dbo.marketing_data_cleaned)
+           FORMAT((SELECT AVG(CAST(MntWines + MntFruits + MntMeatProducts + MntFishProducts + MntSweetProducts + MntGoldProds AS DECIMAL(18,2))) FROM dbo.marketing_data), 'N2', 'en-US'),
+           FORMAT((SELECT AVG(CAST(MntWines + MntFruits + MntMeatProducts + MntFishProducts + MntSweetProducts + MntGoldProds AS DECIMAL(18,2))) FROM dbo.marketing_data_cleaned), 'N2', 'en-US')
     UNION ALL SELECT 11, N'Rows with spend but zero purchases (flagged, not changed)',
-           (SELECT COUNT(*) FROM dbo.marketing_data
+           FORMAT((SELECT COUNT(*) FROM dbo.marketing_data
              WHERE (MntWines + MntFruits + MntMeatProducts + MntFishProducts + MntSweetProducts + MntGoldProds) > 0
-               AND (NumWebPurchases + NumCatalogPurchases + NumStorePurchases) = 0),
-           (SELECT COUNT(*) FROM dbo.marketing_data_cleaned WHERE Purchase_Consistency_Flag IS NOT NULL)
+               AND (NumWebPurchases + NumCatalogPurchases + NumStorePurchases) = 0), 'N0', 'en-US'),
+           FORMAT((SELECT COUNT(*) FROM dbo.marketing_data_cleaned WHERE Purchase_Consistency_Flag IS NOT NULL), 'N0', 'en-US')
 ) s
 ORDER BY Sort_No;
 GO

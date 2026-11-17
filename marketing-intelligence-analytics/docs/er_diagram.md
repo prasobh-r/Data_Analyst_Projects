@@ -55,4 +55,3 @@ erDiagram
 **Notes**
 - `Total_Purchases` is web + catalog + store purchases. `NumDealsPurchases` is kept separate because the source does not say whether deal purchases overlap the channel counts.
 - The flag columns record the cleaning decisions made in `sql/02_data_cleaning.sql`.
-- The previous PNG showed `FactCampaignResponse` linked to `FactPurchases`, which does not match the SQL foreign keys. Delete it, or redraw it from this diagram.

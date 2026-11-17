@@ -110,7 +110,8 @@ GO
 --         outlier to investigate; the data alone cannot prove it is a placeholder.
 --         0 zero/negative values
 -- ----------------------------------------------------------------
-SELECT MIN(Income) AS Min_Income, MAX(Income) AS Max_Income, AVG(Income) AS Avg_Income,
+SELECT MIN(Income) AS Min_Income, MAX(Income) AS Max_Income,
+       CAST(AVG(CAST(Income AS DECIMAL(18,2))) AS DECIMAL(18,2)) AS Avg_Income,
        SUM(CASE WHEN Income <= 0 THEN 1 ELSE 0 END) AS Zero_Or_Negative
 FROM dbo.marketing_data;
 
@@ -184,12 +185,14 @@ GO
 -- ----------------------------------------------------------------
 -- 11. IS MISSING INCOME RANDOM?
 -- Verified in SQL Server: Australia 13 of 160 (8.1%), Germany 4 of 120 (3.3%), USA 2 of 109 (1.8%);
--- all other countries under 1%. Germany and USA counts are tiny, so treat the pattern as a lead, not proof.
+-- all other countries under 1%. Germany and USA counts are tiny, so judge them with care.
+-- Checked outside SQL Server: Australia vs all other countries, Fisher's exact p about 1e-9 (13/160 vs 11/2080),
+-- so missingness is not random across countries. It shows the pattern, not the cause.
 -- ----------------------------------------------------------------
 SELECT Country,
        COUNT(*) AS Customers,
        SUM(CASE WHEN Income IS NULL THEN 1 ELSE 0 END) AS Missing_Income,
-       ROUND(100.0 * SUM(CASE WHEN Income IS NULL THEN 1 ELSE 0 END) / COUNT(*), 2) AS Missing_Pct
+       CAST(ROUND(100.0 * SUM(CASE WHEN Income IS NULL THEN 1 ELSE 0 END) / COUNT(*), 2) AS DECIMAL(18,2)) AS Missing_Pct
 FROM dbo.marketing_data
 GROUP BY Country
 ORDER BY Missing_Pct DESC;
