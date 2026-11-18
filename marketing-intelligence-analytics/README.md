@@ -181,7 +181,7 @@ Both campaigns cover the same customers, so Campaign 1 vs 2 uses McNemar's paire
 
 | Step | Output |
 |---|---|
-| Profiling | ![Profiling](screenshots/01_profiling_summary_new.png) |
+| Profiling | ![Profiling](screenshots/01_profiling_summary.png) |
 | Before and after | ![Before and after](screenshots/03_before_after_summary.png) |
 | RFM sensitivity | ![RFM sensitivity](screenshots/04_rfm_sensitivity.png) |
 | Customer value | ![Customer value](screenshots/05_customer_value.png) |
