@@ -2,7 +2,7 @@
    STEP 1: RAW DATA PROFILING  (read-only, changes nothing)
    Table : dbo.marketing_data  (imported via SSMS "Import Flat File")
    Rule  : never UPDATE or DELETE marketing_data. It stays as the raw source.
-   Run each section separately and screenshot the results.
+   Run each section separately and compare with the "Expect" comments.
    "Expect" comments = what the CSV showed when checked outside SQL Server.
    If your result differs, investigate before moving to Step 2.
    ================================================================ */
@@ -78,7 +78,7 @@ FROM dbo.marketing_data;
 -- 4a. how many extra rows
 SELECT COUNT(*) AS Extra_Duplicate_Rows FROM #Dup WHERE ID <> First_ID;
 
--- 4b. the duplicate groups themselves (evidence to screenshot)
+-- 4b. the duplicate groups themselves
 SELECT First_ID AS Representative_ID, COUNT(*) AS Rows_In_Group,
        STRING_AGG(CAST(ID AS VARCHAR(20)), ', ') AS IDs_In_Group
 FROM #Dup

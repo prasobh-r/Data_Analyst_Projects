@@ -1,0 +1,50 @@
+{
+  "name": "Marketing Intelligence",
+  "dataColors": ["#8B97A6", "#1B9AAA", "#E07B1F", "#16253B", "#5B7C99", "#B8C4D0", "#2E8B57", "#A23B72"],
+  "background": "#FFFFFF",
+  "foreground": "#16253B",
+  "tableAccent": "#1B9AAA",
+  "good": "#1B9AAA",
+  "neutral": "#8B97A6",
+  "bad": "#E07B1F",
+  "textClasses": {
+    "callout": { "fontSize": 32, "fontFace": "Segoe UI Semibold", "color": "#16253B" },
+    "title": { "fontSize": 16, "fontFace": "Segoe UI Semibold", "color": "#16253B" },
+    "header": { "fontSize": 14, "fontFace": "Segoe UI Semibold", "color": "#16253B" },
+    "label": { "fontSize": 12, "fontFace": "Segoe UI", "color": "#4A5A6E" }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "title": [
+          { "show": true, "fontSize": 16, "fontFamily": "Segoe UI Semibold", "fontColor": { "solid": { "color": "#16253B" } }, "alignment": "left" }
+        ],
+        "categoryAxis": [
+          { "fontSize": 12, "labelColor": { "solid": { "color": "#4A5A6E" } }, "showAxisTitle": false }
+        ],
+        "valueAxis": [
+          { "fontSize": 12, "labelColor": { "solid": { "color": "#4A5A6E" } }, "showAxisTitle": false, "gridlineShow": false }
+        ],
+        "legend": [
+          { "fontSize": 12, "labelColor": { "solid": { "color": "#4A5A6E" } } }
+        ],
+        "labels": [
+          { "fontSize": 12, "color": { "solid": { "color": "#16253B" } } }
+        ],
+        "background": [
+          { "show": true, "color": { "solid": { "color": "#FFFFFF" } }, "transparency": 0 }
+        ],
+        "border": [
+          { "show": true, "color": { "solid": { "color": "#C9D1DB" } }, "radius": 8 }
+        ]
+      }
+    },
+    "page": {
+      "*": {
+        "background": [
+          { "color": { "solid": { "color": "#F6F7F9" } }, "transparency": 0 }
+        ]
+      }
+    }
+  }
+}
