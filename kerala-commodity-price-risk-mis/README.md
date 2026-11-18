@@ -1,27 +1,27 @@
-# Kerala Essential Commodities: Price & Supply-Stress Intelligence
+# Kerala Essential Commodities: Price-Risk MIS
 
-An Advanced Excel / MIS reporting project that turns **700K+ daily retail price records** (14 Kerala districts, 72 essential commodities, January 2023 to February 2026) into a monthly **price-risk early-warning pack**: a composite risk index, an exception report, district comparisons, commodity-group trends and a one-page dashboard.
+An Advanced Excel / MIS reporting project that turns **700K+ daily retail price records** (14 Kerala districts, 72 essential commodities, January 2023 to February 2026) into a monthly **price-pressure monitoring pack**: a composite risk index, an exception report, district comparisons, commodity-group trends and a one-page dashboard.
 
 ![Dashboard](docs/screenshots/dashboard.png)
 
-**Contents:** [Quick start](#quick-start) · [Business question](#business-question) · [Key findings](#key-findings-data-through-27-february-2026) · [Data source and attribution](#data-source-and-attribution) · [Method](#method-in-brief) · [Validation](#validation) · [Reproduce](#reproduce) · [Limitations](#limitations) · [Repository layout](#repository-layout)
+**Contents:** [Quick start](#quick-start) · [Business question](#business-question) · [Key findings](#key-findings-data-through-27-february-2026) · [Data source and attribution](#data-source-and-attribution) · [Method](#method-in-brief) · [Validation](#validation) · [Backtest](#backtest) · [Reproduce](#reproduce) · [Limitations](#limitations) · [Repository layout](#repository-layout)
 
 ## Quick start
 
 1. Open `Kerala_Commodity_Price_Risk_MIS.xlsx` and go to the **Dashboard** sheet.
 2. Pick a reporting month in the yellow cell (C4) and a commodity for the trend charts (G4).
-3. Read the KPI cards and the Top 10 alerts; open **Watchlist** for the full exception report with suggested actions.
+3. Read the KPI cards and the Top 10 alerts. Each alert shows the **price direction** (Rising / Flat / Easing, month on month) next to its risk score, because a high score can be a price that is already falling back. Open **Watchlist** for the full exception report with suggested actions.
 4. Use **Group_Heatmap** and **District_View** for trends and district comparisons; change scoring settings on **Assumptions**.
 
 ## Business question
 
 Which essential commodities and districts show the strongest signs of price pressure, and where should analysts focus attention to catch potential price spikes and supply-related stress early?
 
-The risk score is an **early-warning indicator based on prices only**. It is not a shortage forecast.
+The risk score is a **price-only indicator of current price pressure**. It is not a shortage forecast, and the [backtest](#backtest) shows it should not be read as a predictor of further rises.
 
 ## Key findings (data through 27 February 2026)
 
-- **Feb 2026:** dry chillies is the only Red alert (score about 75): price **+15.0% month on month** and **+41.9% year on year**, and all 14 districts are more than 10% above their own 12-month averages, a statewide pattern. Garlic and Ladies Finger are Amber. 60 of 72 commodities are scored; 12 are excluded for thin district coverage.
+- **Feb 2026:** dry chillies is the only Red alert (score about 75): price **+15.0% month on month** and **+41.9% year on year**, and all 14 districts are more than 10% above their own 12-month averages, a statewide pattern. Garlic and Ladies Finger are Amber; garlic is *easing* (-3.9% month on month) from a high level, which is why the Top 10 shows direction. 60 of 72 commodities are scored; 12 are excluded for thin district coverage.
 - **Coconut oil (Kera)** rose from about Rs 165/L (Jan 2023) to a peak of about Rs 466 (Oct 2025) and was Red in Jan 2025 and Jun to Aug 2025, before easing to about Rs 380. Its volatility stayed low because the rise was steady, which is why year-on-year change and deviation from the 12-month average are scored separately from volatility.
 - **Most repeatedly flagged (Red months, Jan 2024 to Feb 2026):** garlic 8, coconut sold per 10 nos 6, onion big 6, tomato 5.
 - Red commodities per month ranged from 0 to 10, peaking in May and Jun 2024; there were no Red alerts from Feb to May 2025.
@@ -35,7 +35,7 @@ The risk score is an **early-warning indicator based on prices only**. It is not
 1. [Essential Commodity Price Dataset (dataset 67)](https://ecostat.kerala.gov.in/dataset/67)
 2. [State Dashboard: Prices of Essential Commodities](https://ecostat.kerala.gov.in/state-dashboard-prices-of-essential-commodities?lang=mal) (Malayalam version of the page)
 
-The dashboard describes daily retail prices of essential food commodities collected at the 14 district headquarters on working days. When data is unavailable for a day, the dashboard is described as showing the last available day's data. *Accessed: TODO add date.*
+The dashboard describes daily retail prices of essential food commodities collected at the 14 district headquarters on working days. When data is unavailable for a day, the dashboard is described as showing the last available day's data. *The data runs to 27 Feb 2026; the exact download date was not recorded.*
 
 **Coverage:** 3 Jan 2023 to 27 Feb 2026 | 14 districts | 70 commodities in 2023 and 72 from 2024 | 874 reporting dates (working-day reporting, so a calendar date without records is not automatically missing data).
 
@@ -68,7 +68,26 @@ Checked:
 - **Recalculation:** about 120,000 formulas recalculated in LibreOffice with zero errors.
 - **Monthly aggregation:** recomputed monthly averages vs `archive/monthly_price_changes.csv`: median difference 0.02%, 95th percentile 0.23%, maximum 4.7% (a commodity reported by two districts).
 
-Not done: a backtest of the supplied forecasts, and a test of whether high scores precede later price spikes.
+Backtested (section below): whether high scores precede later price rises. Not done: a backtest of the supplied forecasts (the files hold only future predictions).
+
+## Backtest
+
+Question: do Red and Amber flags precede price rises? Tested on 1,500 scored commodity-months (Jan 2024 to Jan 2026), with intervals from a bootstrap over commodities. Full write-up: [docs/BACKTEST.md](docs/BACKTEST.md).
+
+| Alert class | Months | Price up 5%+ next month | Median change after 3 months |
+|---|---:|---:|---:|
+| Red | 86 | 29.1% (95% interval 20 to 38%) | -12.9% |
+| Amber | 209 | 33.0% (26 to 39%) | -3.4% |
+| Green | 1,205 | 10.5% (8 to 14%) | +0.2% |
+
+Base rate: 14.7%. What the test shows, and what it does not:
+
+- Red and Amber flags are followed by a 5%+ rise about twice as often as average, and the pattern holds across event sizes, two sub-periods, without the seasonal component and without the most frequently Red commodities.
+- **Most of this comes from some commodities being volatile.** A rule using only a commodity's own past frequency of 5% rises does as well (AUC 0.758 vs 0.762), and within a single commodity the score times rises poorly (AUC 0.53). Ranking commodities each month shows no reliable skill (rank correlation 0.03).
+- **Three months after a Red flag the price is usually lower** (71% of cases), so Red marks a spike in progress, not a coming surge.
+- **In-sample:** weights and caps were calibrated on the same data, so this is a consistency check, not an out-of-sample test. The supplied forecasts are not backtested.
+
+![Backtest](docs/screenshots/backtest.png)
 
 ## Reproduce
 
@@ -85,6 +104,7 @@ jupyter lab          # open notebooks/Kerala_Commodity_Risk_Pipeline.ipynb, then
 python scripts/01_prepare_monthly.py      # must run first: writes build/*.pkl
 python scripts/02_validate_monthly.py     # optional cross-check
 python scripts/03_build_workbook.py       # writes build/Kerala_Commodity_Price_Risk_MIS_rebuilt.xlsx
+python scripts/04_backtest_risk_score.py  # writes backtest/*.csv and docs/screenshots/backtest.png (about 30 s)
 ```
 
 On Windows PowerShell, create and activate a virtual environment first: `python -m venv .venv` then `.\.venv\Scripts\Activate.ps1`. Rebuilt workbooks are written to `build/` so the committed workbook is never overwritten (set `MIS_OUT` to choose another path). A script-built workbook has no cached values and is set to calculate when opened in Excel; recalculate with LibreOffice before previewing it elsewhere. Tested with Python 3.12, pandas 3.0.2, numpy 2.4.4, openpyxl 3.1.5.
@@ -92,15 +112,16 @@ On Windows PowerShell, create and activate a virtual environment first: `python 
 ## Limitations
 
 1. **Price data only.** No market arrivals, stock, rainfall or import data, so supply stress is inferred from price-based proxies.
-2. **Possible carried-forward prices.** 88.9% of daily prices equal the previous record for the same district and commodity (no single date exceeds 94.5%, so there are no whole-day copies). Retail prices are sticky, but if the source repeats the last available day, some values may be stale; this cannot be separated from genuinely unchanged prices. Monthly means dampen the effect.
+2. **Possible carried-forward prices.** 89.0% of daily prices equal the previous record for the same district and commodity (no single date exceeds 94.5%, so there are no whole-day copies). Retail prices are sticky, but if the source repeats the last available day, some values may be stale; this cannot be separated from genuinely unchanged prices. Monthly means dampen the effect.
 3. **Uneven coverage.** Some commodities are reported by few districts; 12 of 72 are excluded in Feb 2026. Commodity coverage also changes slightly between years (70 to 72).
 4. **Analyst-defined weights, caps and thresholds**, calibrated on 2024 to Feb 2026 data. Test sensitivity before operational use.
 5. **Short seasonal history** (3 years): for example, tomato's July peak is largely driven by 2023.
-6. **Forecasts are indicative scenarios.** They cover only Tomato, Ladies Finger and Coconut oil (Kera), their method is undocumented and they have not been backtested. Tomato's forecast starts 24.4% above its last 30 observations.
-7. **Monthly aggregates in the workbook** for speed; a full 700K-row Power Pivot model must be built separately (see the `Model_Guide` sheet). Drop-downs replace slicers.
-8. Source commodity groups are kept as supplied (for example, onion small sits under Spices and Condiments).
+6. **Forecasts are indicative scenarios.** They cover only Tomato, Ladies Finger and Coconut oil (Kera), their method is undocumented and they have not been backtested (the files hold only future values). Tomato's forecast starts 24.4% above its last 30 observations.
+7. **The risk score is not a proven predictor.** The backtest is in-sample (weights were calibrated on the same period) and shows little ability to time rises within a commodity or to rank commodities month by month.
+8. **Monthly aggregates in the workbook** for speed; a full 700K-row Power Pivot model must be built separately (see the `Model_Guide` sheet). Drop-downs replace slicers.
+9. Source commodity groups are kept as supplied (for example, onion small sits under Spices and Condiments).
 
-**Next steps:** backtest the forecasts, add arrivals and rainfall data, add district-level risk scores, and build the Power Pivot model with DAX and slicers.
+**Next steps:** test the score on data after Feb 2026, backtest the forecasts (refit at past cut-offs), add arrivals and rainfall data, add district-level risk scores, and build the Power Pivot model with DAX and slicers.
 
 ## Repository layout
 
@@ -108,6 +129,7 @@ On Windows PowerShell, create and activate a virtual environment first: `python 
 .
 ├── Kerala_Commodity_Price_Risk_MIS.xlsx   # main deliverable (already recalculated)
 ├── data/                                  # 9 input files used by the workbook
+├── backtest/                              # backtest outputs (CSV)
 ├── archive/                               # earlier outputs kept for transparency (superseded or cross-check; not inputs)
 ├── notebooks/
 │   └── Kerala_Commodity_Risk_Pipeline.ipynb
@@ -116,12 +138,14 @@ On Windows PowerShell, create and activate a virtual environment first: `python 
 │   ├── 01_prepare_monthly.py
 │   ├── 02_validate_monthly.py
 │   ├── 03_build_workbook.py
+│   ├── 04_backtest_risk_score.py          # does a high score precede a price rise?
 │   └── risk_score.py                      # pandas replica of the scoring logic
 ├── docs/
 │   ├── METHODOLOGY.md
 │   ├── WORKBOOK_GUIDE.md
 │   ├── DATA_DICTIONARY.md
 │   ├── DATA_QUALITY_LOG.md
+│   ├── BACKTEST.md
 │   ├── Dataset_Usage.xlsx
 │   └── screenshots/
 ├── build/                                 # generated files (git-ignored)
@@ -131,4 +155,4 @@ On Windows PowerShell, create and activate a virtual environment first: `python 
 
 ## Author and licence
 
-Prasobh R. Code licence: TODO choose one (for example MIT). Source data remains subject to the terms of the Department of Economics and Statistics, Government of Kerala; confirm them before redistributing the data files.
+Prasobh R. Code licence: MIT (see `LICENSE`; it covers the code only). Source data remains subject to the terms of the Department of Economics and Statistics, Government of Kerala; confirm them before redistributing the data files.

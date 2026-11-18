@@ -14,7 +14,7 @@
 | Sheet | Purpose |
 |---|---|
 | `Dashboard` | Month and commodity selectors, KPI cards, Top 10 alerts, four charts, auto commentary, analyst notes |
-| `Watchlist` | Top 15 exception report with suggested actions; five largest rises and falls |
+| `Watchlist` | Top 15 exception report with price direction and suggested actions; five largest rises and falls |
 | `Group_Heatmap` | 12-month risk heatmap by commodity group and for the current Top 15 |
 | `District_View` | District price premium vs the state average by commodity group |
 | `Forecast` | Supplied 90-day forecasts for three commodities with sanity checks (not backtested) |

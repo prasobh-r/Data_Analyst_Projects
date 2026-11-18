@@ -1,0 +1,9 @@
+,value
+months,25.0
+mean_rank_correlation,0.033484535022292136
+t_stat,0.5839953114966361
+months_positive,14.0
+top5_hit_rate,0.312
+top5_n,125.0
+all_hit_rate,0.14666666666666667
+top5_hit_rate_by_past_frequency,0.272

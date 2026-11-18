@@ -49,7 +49,7 @@
 | `Seasonal` | Commodity x calendar month (864) | Index and lookup key |
 | `Months` | Month (38) | Label, days reported, last date reported |
 | `Lists` | 69 commodities | Drop-down source for the trend charts (full 38-month history only) |
-| `Month_View` | Commodity (72) | All metrics for the month selected on the Dashboard; ranks |
+| `Month_View` | Commodity (72) | All metrics for the month selected on the Dashboard; ranks; price direction (Rising / Flat / Easing from the MoM change and the flat band on `Assumptions`) |
 | `Chart_Data` | Helper | Top 10, selected commodity series, class counts by group |
 
 ## Units

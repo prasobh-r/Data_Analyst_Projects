@@ -10,6 +10,7 @@ DATA=ROOT/"data"
 BUILD=ROOT/"build"; BUILD.mkdir(exist_ok=True)
 
 warnings.filterwarnings('ignore')
+from openpyxl.worksheet.properties import PageSetupProperties
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter as L
@@ -118,14 +119,15 @@ th=[('Red alert: risk score at or above',TH['red'],'0'),('Amber: risk score at o
 ('High confidence: districts reporting at least',TH['hi'],'0'),('Medium confidence: districts reporting at least (below = excluded)',TH['med'],'0'),
 ('Sustained surge: YoY change at least',TH['surge'],'0%'),('Sustained surge: also price above 12M average by at least',TH['surgedev'],'0%'),
 ('Short-term spike: MoM rise at least',TH['spike'],'0%'),('Volatile: 12M volatility at least',TH['volatile'],'0%'),
-('Statewide signal: breadth at least',TH['state'],'0%'),('Regional signal: breadth at least',TH['region'],'0%')]
+('Statewide signal: breadth at least',TH['state'],'0%'),('Regional signal: breadth at least',TH['region'],'0%'),
+('Price direction: Flat if the MoM change is within +/-',0.01,'0.0%')]
 for i,(n,v,fmt) in enumerate(th):
     r=16+i; ws.cell(r,1,n).font=F(); c=ws.cell(r,2,v); c.font=INP_FONT; c.fill=INP_FILL; c.number_format=fmt
 ws['A27']='Method notes'; ws['A27'].font=F(bold=True,color=NAVY)
 notes=['Risk score (0-100) = weighted average of seven component scores, each = MIN(1, value / cap) x 100, rises only. It measures upward price pressure on consumers.',
 'Eligible = month index >= 13 (needs 12 months of history) AND at least the Medium-confidence number of districts reporting. Low-confidence items are excluded from ranking, not scored 0.',
 'A state average is the equal-weight mean of district monthly means; a district-month needs at least 5 daily observations to count.',
-'Data has prices only (no arrivals, stock or rainfall). "Supply stress" is inferred from dispersion across districts, breadth of rise and seasonality: it is an early-warning indicator, not a shortage forecast.',
+'Data has prices only (no arrivals, stock or rainfall). "Supply stress" is inferred from dispersion across districts, breadth of rise and seasonality: it is an indicator of current price pressure, not a shortage forecast.',
 'Thresholds, caps and weights were calibrated on the 2024-2026 distribution (caps near the 90th-95th percentile). Change them in the blue cells to test sensitivity.']
 for i,t in enumerate(notes): 
     ws.cell(28+i,1,t).font=F(size=9); 
@@ -203,7 +205,7 @@ ws=S['Month_View']; title(ws,'Month view (helper): all commodities for the month
 ws['A3']='Selected label'; ws['B3']='=Dashboard!$C$4'
 ws['A4']='Selected month'; ws['B4']=f'=INDEX(Months!$B$2:$B$39,MATCH(Dashboard!$C$4,Months!$C$2:$C$39,0))'; ws['B4'].number_format='mmm yyyy'
 ws['D3']='Key (yyyymm)'; ws['E3']='=YEAR(B4)*100+MONTH(B4)'
-mv=['item_id','Commodity','Group','Data_Calc row','Price','MoM %','YoY %','vs 12M avg %','Volatility','Districts','Confidence','Risk score','Class','Risk type','Spread signal','Scored?','Score (rounded)','Risk rank','MoM (scored)','MoM rank: rises','MoM rank: falls']
+mv=['item_id','Commodity','Group','Data_Calc row','Price','MoM %','YoY %','vs 12M avg %','Volatility','Districts','Confidence','Risk score','Class','Risk type','Spread signal','Scored?','Score (rounded)','Risk rank','MoM (scored)','MoM rank: rises','MoM rank: falls','Price direction (MoM)']
 for j,h in enumerate(mv,1): ws.cell(6,j,h)
 style_hdr(ws,6,1,len(mv),NAVY,32)
 pull={5:'F',6:'K',7:'L',8:'N',9:'O',10:'G',11:'P',12:'Y',13:'Z',14:'AA',15:'AB'}
@@ -220,10 +222,11 @@ for k in range(NI):
     ws.cell(r,19,f'=IF(AND(P{r}=1,ISNUMBER(F{r})),ROUND(F{r},6),"")')
     ws.cell(r,20,f'=IF(S{r}="","",COUNTIF($S${R0}:$S${R1},">"&S{r})+COUNTIF($S${R0}:S{r},S{r}))')
     ws.cell(r,21,f'=IF(S{r}="","",COUNTIF($S${R0}:$S${R1},"<"&S{r})+COUNTIF($S${R0}:S{r},S{r}))')
-    for c in range(1,22):
+    ws.cell(r,22,f'=IF(AND(P{r}=1,ISNUMBER(F{r})),IF(F{r}>{A(26)},"Rising",IF(F{r}<-{A(26)},"Easing","Flat")),"")')
+    for c in range(1,23):
         x=ws.cell(r,c); x.font=F(size=9)
     for c,fmt in {5:'#,##0.00',6:'0.0%',7:'0.0%',8:'0.0%',9:'0.0%',12:'0.0',17:'0.0000',19:'0.0000'}.items(): ws.cell(r,c).number_format=fmt
-setw(ws,{L(c):13 for c in range(1,22)}); ws.column_dimensions['B'].width=40; ws.column_dimensions['C'].width=22
+setw(ws,{L(c):13 for c in range(1,23)}); ws.column_dimensions['B'].width=40; ws.column_dimensions['C'].width=22
 ws.freeze_panes='C7'
 MV=lambda col: f"Month_View!${col}${R0}:${col}${R1}"
 for cond,(bg,fg) in {'Red':('F8CBCB','9C0006'),'Amber':('FFE8B3','7F5200'),'Green':('D5F0DC','1B5E20')}.items():
@@ -231,21 +234,21 @@ for cond,(bg,fg) in {'Red':('F8CBCB','9C0006'),'Amber':('FFE8B3','7F5200'),'Gree
 # ---------------- Watchlist ----------------
 ws=S['Watchlist']; title(ws,'MIS exception report: Top 15 price-risk alerts','Month and thresholds are set on Dashboard / Assumptions. Ranked by risk score; low-confidence commodities are excluded.')
 ws['A3']='Month:'; ws['B3']='=Dashboard!$C$4'; ws['A3'].font=F(bold=True); ws['B3'].font=F(bold=True,color='C0392B')
-wh=['Rank','Commodity','Group','Price (per unit)','MoM %','YoY %','vs 12M avg','Volatility','Risk score','Class','Risk type','Spread signal','Districts reporting','Suggested action','row idx','item_id']
+wh=['Rank','Commodity','Group','Price (per unit)','MoM %','YoY %','vs 12M avg','Volatility','Risk score','Class','Risk type','Spread signal','Price direction (MoM)','Districts reporting','Suggested action','row idx','item_id']
 for j,h in enumerate(wh,1): ws.cell(5,j,h)
-style_hdr(ws,5,1,16,NAVY,32)
-def act(r): return (f'=IF($O{r}="","",IF(K{r}="Sustained surge","Price level has reset: review budgets/contracts, check substitutes, monitor monthly",'
+style_hdr(ws,5,1,17,NAVY,32)
+def act(r): return (f'=IF($P{r}="","",IF(K{r}="Sustained surge","Price level has reset: review budgets/contracts, check substitutes, monitor monthly",'
  f'IF(K{r}="Short-term spike","Spike: check market reports, delay non-urgent purchases, review again in 2 weeks",'
  f'IF(K{r}="Volatile","Volatile: set price alert band, avoid large forward purchases, track weekly",'
  f'IF(J{r}="Red","Red alert: escalate and review sourcing options","Monitor in next monthly review")))))')
 for n in range(1,16):
     r=5+n; ws.cell(r,1,n)
-    ws.cell(r,15,f'=IFERROR(MATCH(A{r},{MV("R")},0),"")')
-    src={2:'B',3:'C',4:'E',5:'F',6:'G',7:'H',8:'I',9:'L',10:'M',11:'N',12:'O',13:'J',16:'A'}
+    ws.cell(r,16,f'=IFERROR(MATCH(A{r},{MV("R")},0),"")')
+    src={2:'B',3:'C',4:'E',5:'F',6:'G',7:'H',8:'I',9:'L',10:'M',11:'N',12:'O',13:'V',14:'J',17:'A'}
     for c,col in src.items():
-        ws.cell(r,c,f'=IF($O{r}="","",INDEX({MV(col)},$O{r}))')
-    ws.cell(r,14,act(r))
-    for c in range(1,17): ws.cell(r,c).font=F(size=9 if c==14 else 10); ws.cell(r,c).border=box
+        ws.cell(r,c,f'=IF($P{r}="","",INDEX({MV(col)},$P{r}))')
+    ws.cell(r,15,act(r))
+    for c in range(1,18): ws.cell(r,c).font=F(size=9 if c==15 else 10); ws.cell(r,c).border=box
     for c,fmt in {4:'#,##0.00',5:'+0.0%;-0.0%;0.0%',6:'+0.0%;-0.0%;0.0%',7:'+0.0%;-0.0%;0.0%',8:'0.0%',9:'0.0'}.items(): ws.cell(r,c).number_format=fmt
 ws['A22']='Biggest monthly movers (scored commodities)'; ws['A22'].font=F(bold=True,color=NAVY,size=11)
 for j,h in enumerate(['Rank','Largest rises','Group','Price','MoM %','YoY %','Class'],1): ws.cell(23,j,h)
@@ -260,10 +263,12 @@ for blk,(r0,rk) in {'rise':(24,'T'),'fall':(32,'U')}.items():
             ws.cell(r,c,f'=IFERROR(INDEX({MV(col)},{idx}),"")')
         for c in range(1,8): ws.cell(r,c).font=F(); ws.cell(r,c).border=box
         ws.cell(r,4).number_format='#,##0.00'; ws.cell(r,5).number_format='+0.0%;-0.0%;0.0%'; ws.cell(r,6).number_format='+0.0%;-0.0%;0.0%'
-setw(ws,{'A':7,'B':38,'C':22,'D':13,'E':10,'F':10,'G':11,'H':10,'I':10,'J':9,'K':17,'L':14,'M':12,'N':70,'O':8,'P':8})
+setw(ws,{'A':7,'B':38,'C':22,'D':13,'E':10,'F':10,'G':11,'H':10,'I':10,'J':9,'K':17,'L':14,'M':13,'N':12,'O':70,'P':8,'Q':8})
 for rng in ['J6:J20','G24:G28','G32:G36']:
     for cond,(bg,fg) in {'Red':('F8CBCB','9C0006'),'Amber':('FFE8B3','7F5200'),'Green':('D5F0DC','1B5E20')}.items():
         ws.conditional_formatting.add(rng,CellIsRule(operator='equal',formula=[f'"{cond}"'],fill=fill(bg),font=Font(name=FONT,color=fg)))
+for cond,fg in {'Rising':'9C0006','Easing':'1B5E20'}.items():
+    ws.conditional_formatting.add('M6:M20',CellIsRule(operator='equal',formula=[f'"{cond}"'],font=Font(name=FONT,bold=True,color=fg)))
 ws.conditional_formatting.add('I6:I20',ColorScaleRule(start_type='num',start_value=0,start_color='FFFFFF',end_type='num',end_value=100,end_color='F4A6A6'))
 ws.freeze_panes='C6'
 # ---------------- Group_Heatmap ----------------
@@ -288,7 +293,7 @@ ws.cell(17,1,'Commodity'); ws.cell(17,2,'item_id')
 for k in range(12): ws.cell(17,3+k,f'={L(3+k)}5').number_format='mmm yy'
 style_hdr(ws,17,1,14,NAVY,32)
 for n in range(15):
-    r=18+n; ws.cell(r,1,f'=Watchlist!B{6+n}'); ws.cell(r,2,f'=Watchlist!P{6+n}')
+    r=18+n; ws.cell(r,1,f'=Watchlist!B{6+n}'); ws.cell(r,2,f'=Watchlist!Q{6+n}')
     for k in range(12):
         col=L(3+k)
         key=f'$B{r}*1000000+YEAR({col}$17)*100+MONTH({col}$17)'
@@ -401,12 +406,13 @@ for row in ws.iter_rows(min_row=4,max_row=44):
         if x.font.name!=FONT or x.font.bold is not True: x.font=F(size=9,bold=x.font.bold,color=x.font.color)
 # ---------------- Dashboard ----------------
 ws=S['Dashboard']; ws.sheet_view.showGridLines=False
+ws.sheet_properties.pageSetUpPr=PageSetupProperties(fitToPage=True); ws.page_setup.fitToWidth=1; ws.page_setup.fitToHeight=1; ws.page_setup.orientation='portrait'  # prints on one page
 for c in range(1,16): ws.column_dimensions[L(c)].width=12.5
 ws.column_dimensions['A'].width=2
 ws.column_dimensions['C'].width=16; ws.column_dimensions['D'].width=16
-ws.merge_cells('B2:N2'); ws['B2']='Kerala Essential Commodities: Price & Supply-Stress Intelligence'; ws['B2'].font=F(size=18,bold=True,color='FFFFFF'); ws['B2'].fill=fill(NAVY); ws['B2'].alignment=Alignment(vertical='center',indent=1)
+ws.merge_cells('B2:O2'); ws['B2']='Kerala Essential Commodities: Price-Risk MIS'; ws['B2'].font=F(size=18,bold=True,color='FFFFFF'); ws['B2'].fill=fill(NAVY); ws['B2'].alignment=Alignment(vertical='center',indent=1)
 ws.row_dimensions[2].height=36
-ws.merge_cells('B3:N3'); ws['B3']='Monthly MIS dashboard | 14 districts, 72 commodities, daily retail prices Jan 2023 - Feb 2026 | Price-risk early warning (no arrivals/stock data)'; ws['B3'].font=F(size=9,italic=True,color='555555')
+ws.merge_cells('B3:O3'); ws['B3']='Monthly MIS dashboard | 14 districts, 72 commodities, daily retail prices Jan 2023 - Feb 2026 | Price-pressure indicator (prices only; no arrivals/stock data)'; ws['B3'].font=F(size=9,italic=True,color='555555')
 ws['B4']='Select month'; ws['B4'].font=F(bold=True)
 ws.merge_cells('C4:D4'); ws['C4']='Feb 2026'; 
 for c in ('C4','D4','G4','H4','I4','J4','K4'): ws[c].fill=INP_FILL; ws[c].border=box
@@ -432,24 +438,26 @@ for c1,c2,lab,val,fmt,sub,bg,fg in cards:
     ws[f'{c1}8']=sub; ws[f'{c1}8'].font=F(size=8,color='555555'); ws[f'{c1}8'].alignment=Alignment(horizontal='center',wrap_text=True,vertical='top')
 ws.row_dimensions[7].height=34; ws.row_dimensions[8].height=26
 ws['B10']='Top 10 price-risk alerts'; ws['B10'].font=F(size=12,bold=True,color=NAVY)
-hd=[('B',None,'Rank'),('C','D','Commodity'),('E','F','Group'),('G',None,'Price'),('H',None,'MoM'),('I',None,'YoY'),('J',None,'Score'),('K',None,'Class'),('L','M','Risk type'),('N',None,'Spread')]
+hd=[('B',None,'Rank'),('C','D','Commodity'),('E','F','Group'),('G',None,'Price'),('H',None,'MoM'),('I',None,'YoY'),('J',None,'Score'),('K',None,'Class'),('L','M','Risk type'),('N',None,'Spread'),('O',None,'Direction')]
 for a,b,t in hd:
     if b: ws.merge_cells(f'{a}11:{b}11')
     ws[f'{a}11']=t
-for c in range(2,15):
+for c in range(2,16):
     x=ws.cell(11,c); x.font=F(bold=True,color='FFFFFF'); x.fill=fill(NAVY); x.alignment=Alignment(horizontal='center')
-wsrc={'B':'A','C':'B','E':'C','G':'D','H':'E','I':'F','J':'I','K':'J','L':'K','N':'L'}
+wsrc={'B':'A','C':'B','E':'C','G':'D','H':'E','I':'F','J':'I','K':'J','L':'K','N':'L','O':'M'}
 for n in range(10):
     r=12+n
     for a,b,t in hd:
         if b: ws.merge_cells(f'{a}{r}:{b}{r}')
         ws[f'{a}{r}']=f'=Watchlist!{wsrc[a]}{6+n}'
-    for c in range(2,15): ws.cell(r,c).font=F(size=9); ws.cell(r,c).border=box; ws.cell(r,c).alignment=Alignment(horizontal='center' if c not in (3,5) else 'left')
+    for c in range(2,16): ws.cell(r,c).font=F(size=9); ws.cell(r,c).border=box; ws.cell(r,c).alignment=Alignment(horizontal='center' if c not in (3,5) else 'left')
     ws[f'G{r}'].number_format='#,##0.00'; ws[f'H{r}'].number_format='+0.0%;-0.0%;0.0%'; ws[f'I{r}'].number_format='+0.0%;-0.0%;0.0%'; ws[f'J{r}'].number_format='0.0'
 for cond,(bg,fg) in {'Red':('F8CBCB','9C0006'),'Amber':('FFE8B3','7F5200'),'Green':('D5F0DC','1B5E20')}.items():
     ws.conditional_formatting.add('K12:K21',CellIsRule(operator='equal',formula=[f'"{cond}"'],fill=fill(bg),font=Font(name=FONT,bold=True,color=fg)))
+for cond,fg in {'Rising':'9C0006','Easing':'1B5E20'}.items():
+    ws.conditional_formatting.add('O12:O21',CellIsRule(operator='equal',formula=[f'"{cond}"'],font=Font(name=FONT,bold=True,color=fg)))
 ws.conditional_formatting.add('J12:J21',ColorScaleRule(start_type='num',start_value=0,start_color='FFFFFF',end_type='num',end_value=100,end_color='F4A6A6'))
-ws['B22']='Low-confidence commodities (fewer districts reporting than the Medium threshold) are excluded from ranking. Change thresholds on the Assumptions sheet.'; ws['B22'].font=F(size=8,italic=True,color='777777')
+ws['B22']='Ranked by risk score. Direction = price change vs the previous month (Rising / Flat / Easing; flat band set on Assumptions). Low-confidence commodities (fewer districts reporting than the Medium threshold) are excluded from ranking.'; ws['B22'].font=F(size=8,italic=True,color='777777')
 # charts
 b1=BarChart(); b1.type='bar'; b1.title='Top 10 risk scores'; b1.height=7.5; b1.width=14.5; b1.legend=None
 b1.add_data(Reference(S['Chart_Data'],min_col=2,min_row=4,max_row=13),titles_from_data=False)
@@ -477,7 +485,7 @@ ws.add_chart(l4,'H40')
 ws['B56']='Management commentary (auto-generated for the selected month)'; ws['B56'].font=F(size=12,bold=True,color=NAVY)
 com=[f'="In "&$C$4&": "&COUNTIF({MV("M")},"Red")&" Red and "&COUNTIF({MV("M")},"Amber")&" Amber alerts among "&SUM({MV("P")})&" scored commodities. Highest risk: "&IFERROR(INDEX({MV("B")},MATCH(1,{MV("R")},0))&" (score "&TEXT(INDEX({MV("L")},MATCH(1,{MV("R")},0)),"0")&", "&INDEX({MV("N")},MATCH(1,{MV("R")},0))&")","n/a")&"."',
  f'="Largest monthly rise: "&IFERROR(INDEX({MV("B")},MATCH(1,{MV("T")},0))&" ("&TEXT(INDEX({MV("F")},MATCH(1,{MV("T")},0)),"+0.0%;-0.0%")&"); largest fall: "&INDEX({MV("B")},MATCH(1,{MV("U")},0))&" ("&TEXT(INDEX({MV("F")},MATCH(1,{MV("U")},0)),"+0.0%;-0.0%")&")","n/a")&"."',
- f'=COUNTIFS({MV("O")},"Statewide",{MV("P")},1)&" scored commodities show a statewide rise (breadth of "&TEXT({A(24)},"0%")&" or more of districts), which points to a supply or cost shock rather than a local issue."',
+ f'=COUNTIFS({MV("O")},"Statewide",{MV("P")},1)&" scored commodities show a statewide rise (breadth of "&TEXT({A(24)},"0%")&" or more of districts), which suggests a statewide price move rather than a local issue."',
  f'="Data confidence: "&COUNTIF({MV("M")},"Low data")&" commodities are excluded this month because fewer than "&{A(19)}&" districts reported. Data runs to "&TEXT($M$4,"dd mmm yyyy")&"."']
 for i,f_ in enumerate(com):
     r=57+i; ws.merge_cells(f'B{r}:N{r}'); ws[f'B{r}']=f_; ws[f'B{r}'].font=F(size=10); ws[f'B{r}'].alignment=Alignment(wrap_text=True,vertical='top'); ws.row_dimensions[r].height=30
@@ -521,7 +529,7 @@ dq=[('Item names embed units and have irregular spaces','Raw names such as "Rice
 ('Seasonal index rests on 3 years','Tomato July index of 171 largely reflects the 2023 spike (Q3 2023 averaged Rs 73 vs Rs 46 and Rs 41 later)','Seasonal pressure carries only 10% weight and is labelled indicative','Noted'),
 ('Source grouping quirks','Onion small is grouped under Spices And Condiments, Onion big under Fruits And Vegetables, Carrot/Beetroot under Tubers','Source groups kept as supplied (group-level views follow them); remap in Dim_Item if needed','Noted'),
 ('Working-day reporting pattern','No Sunday records; Saturdays appear on 119 of about 164 Saturdays; 69 Monday-Friday dates are absent (874 reporting dates in 1,152 calendar days)','Absent dates are not treated as missing data; coverage is measured against reporting dates, and monthly metrics need >=5 daily observations per district-month','Noted'),
-('Prices often unchanged day to day','88.9% of daily prices equal the previous record for the same district and commodity; no single date has more than 94.5% unchanged, so no whole-day copies. The source dashboard is reported to show the last available day when data are missing, so some unchanged values may be carried forward','Cannot separate stale from genuinely unchanged prices; monthly means dampen but do not remove the effect; treat very low volatility with caution','Limitation'),
+('Prices often unchanged day to day','89.0% of daily prices equal the previous record for the same district and commodity; no single date has more than 94.5% unchanged, so no whole-day copies. The source dashboard is reported to show the last available day when data are missing, so some unchanged values may be carried forward','Cannot separate stale from genuinely unchanged prices; monthly means dampen but do not remove the effect; treat very low volatility with caution','Limitation'),
 ('Single-day jumps','224 daily changes above 50% (6 above 100%), mostly vegetables','Left in the data (plausible for perishables); monthly means damp their effect','Noted'),
 ('Forecast files cover 3 items only; method undocumented','Tomato, Ladies Finger, Coconut oil (Kera); 90 days from 28 Feb 2026; Tomato forecast starts well above recent actuals','Shown as scenarios with sanity checks; backtest recommended before use','Open'),
 ('No supply-side data','Dataset has prices only','"Supply stress" inferred from district dispersion, breadth of rise and seasonality; add arrivals/stock/rainfall as next step','Limitation')]
@@ -556,9 +564,9 @@ guide=['LOAD (Data > Get Data > From Text/CSV, then Load To... Data Model only):
 for i,t in enumerate(guide): ws.cell(4+i,1,t).font=F(size=10,bold=t.endswith(':'))
 ws.column_dimensions['A'].width=160
 # ---------------- README ----------------
-ws=S['README']; title(ws,'Kerala Essential Commodities: Price & Supply-Stress Intelligence (Excel MIS project)')
+ws=S['README']; title(ws,'Kerala Essential Commodities: Price-Risk MIS (Excel MIS project)')
 rd=[('PURPOSE',''),
-('Business question','Which essential commodities and which districts face the highest risk of price spikes or supply stress next month, and what should be done?'),
+('Business question','Which essential commodities and districts show the strongest signs of price pressure, and where should analysts focus attention to catch potential price spikes and stress early?'),
 ('Audience','Civil supplies / procurement / price-monitoring officers and MIS reviewers who need a monthly exception report.'),
 ('HOW TO USE',''),
 ('1','Go to Dashboard. Pick a month (cell C4) and a commodity for the trend charts (cell G4).'),
@@ -582,7 +590,7 @@ rd=[('PURPOSE',''),
 ('Price data','Daily retail prices of essential commodities from the Department of Economics and Statistics, Government of Kerala (ecostat.kerala.gov.in: Essential Commodity Price Dataset 67 and the State Dashboard on Prices of Essential Commodities). Collected at the 14 district headquarters on working days. Yearly source files 2023-2026 were cleaned into fact_daily_prices_clean.csv (3 Jan 2023 to 27 Feb 2026). Independent analysis: not an official DES statistic and not endorsed by DES.'),
 ('Aggregation','Monthly state average = equal-weight mean of district monthly means; a district-month needs >=5 daily observations. Aggregates were prepared in Python (pandas) from the cleaned fact table; this is the only non-formula input to Data_Calc (blue headers).'),
 ('Forecasts','Supplied with the dataset for 3 commodities; method undocumented; not backtested. Indicative scenarios only.'),
-('LIMITATIONS','No arrivals, stock, rainfall or import-dependency data: this is a price-risk early-warning tool with supply-stress proxies, not a shortage forecast. Weights/caps are analyst judgement calibrated on 2024-2026 data. Seasonal index uses only 3 years. See Data_Quality for the full log.'),
+('LIMITATIONS','No arrivals, stock, rainfall or import-dependency data: this is a price-pressure indicator with supply-stress proxies, not a shortage forecast and not a proven predictor of future rises (see docs/BACKTEST.md). Weights/caps are analyst judgement calibrated on 2024-2026 data. Seasonal index uses only 3 years. See Data_Quality for the full log.'),
 ('NEXT STEPS','Backtest forecasts on a hold-out period; add rainfall and market arrivals; add district-level risk scores; load the full model into Power Pivot using Model_Guide.')]
 r=3
 for a,b in rd:

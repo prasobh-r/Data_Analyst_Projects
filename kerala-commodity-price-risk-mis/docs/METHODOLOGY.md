@@ -2,7 +2,7 @@
 
 ## 1. Scope and design choice
 
-The dataset contains **prices only**. The workbook therefore measures **upward price pressure** and uses three proxies for supply stress (district dispersion, breadth of rise, seasonality). It is an early-warning indicator for monthly MIS review, not a shortage forecast.
+The dataset contains **prices only**. The workbook therefore measures **upward price pressure** and uses three proxies for supply stress (district dispersion, breadth of rise, seasonality). It is an indicator of current price pressure for monthly MIS review, not a shortage forecast and not a proven predictor of future rises (see `BACKTEST.md`).
 
 Risk is defined from the consumer / procurement side: only price **rises** score. Price falls do not add risk, though they appear in the "largest monthly falls" list.
 
@@ -51,6 +51,7 @@ Each component is converted to 0 to 100 with a cap, then combined with weights:
 **Class:** Red at 65 or above, Amber at 40 or above, otherwise Green.
 **Risk type** (first match): *Sustained surge* (YoY at least 40% and price at least 10% above its 12M average), *Short-term spike* (MoM at least 20%), *Volatile* (volatility at least 12%), otherwise *Stable*.
 **Spread signal:** *Statewide* (breadth at least 50%), *Regional* (at least 20%), otherwise *Isolated/none*.
+**Price direction (MoM):** *Rising* if the month-on-month change of the state average price is above +1%, *Easing* if below -1%, otherwise *Flat*. The 1% band is an analyst choice (Assumptions sheet, row 26). It is shown next to the score but is **not part of the score** and does not change the ranking: the score also reacts to volatility, dispersion and distance from the 12-month average, so a commodity can be Amber while its price is already easing.
 
 ## 5. Calibration history (transparency)
 
@@ -72,4 +73,5 @@ Premium = district monthly mean / state average - 1, averaged over commodities i
 - For Feb 2026, 112 District_View cells (district x group premiums and district averages), 96 Group_Heatmap cells and the Watchlist Top 15 order match independent pandas calculations.
 - Selecting a different month and commodity (Aug 2025, Coconut oil) reproduced the pandas top-5 ranking.
 - The workbook recalculates in LibreOffice with 0 errors across about 120,000 formulas.
-- Not done: a backtest of the supplied forecasts (the files hold only future predictions, so a backtest would require refitting a model on a training cut-off), and an out-of-sample test of whether high scores precede price spikes. Both are recommended next steps.
+- Backtest of the score against later price changes: see `docs/BACKTEST.md` (in-sample; Red and Amber flags are followed by a 5%+ rise about twice as often as average, but the score adds little beyond a commodity's own volatility and often precedes a fall three months later).
+- Not done: a backtest of the supplied forecasts (the files hold only future predictions, so it would require refitting a model on past cut-offs) and a true out-of-sample test on data after Feb 2026.
