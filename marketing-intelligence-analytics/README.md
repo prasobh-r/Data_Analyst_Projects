@@ -94,7 +94,7 @@ Missing income is uneven by country: Australia 13 of 160 customers (8.1%), Germa
 
 Row reconciliation (2,240 = 2,193 + 47), spend and campaign acceptances reconcile to the raw table, no duplicates remain, untouched columns are identical to raw, and income and birth-year checks use NULL-aware comparisons so a value wrongly turned into NULL would be caught.
 
-![Validation results](screenshots/03_validation_results_new.png)
+![Validation results](screenshots/03_validation_results.png)
 
 | Metric | Raw | Cleaned |
 |---|---|---|
