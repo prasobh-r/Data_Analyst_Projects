@@ -55,7 +55,7 @@ every other file in `Dataset/` derives from this one.
 |---|---|---|
 | `loans_model_ready.csv` | `02_EDA_and_cleaning.ipynb` | Subset of `loans_clean.csv` columns selected for modeling, plus `id`/`vintage_month`/`grade` retained for reference |
 | `loans_woe_transformed.csv` | `03_woe_iv_binning.ipynb` | `id`, `defaulted`, and 8 `*_woe` columns (WOE-transformed versions of the selected features) |
-| `loans_scored.csv` | `04_scorecard_model_and_evaluation.ipynb` | `id`, `model_score` (300–850), `model_risk_grade` (A–G) — the only file re-imported into SQL Server, to populate `Fact_Loan` |
+| `loans_scored.csv` | `04_scorecard_model_and_evaluation.ipynb` | `id`, `model_score` (observed range 453–591), `model_risk_grade` (A–G) — the only file re-imported into SQL Server, to populate `Fact_Loan` |
 
 ---
 
@@ -105,7 +105,7 @@ populated from `loans_scored.csv` after the Python scorecard notebook runs.
 | last_pymnt_amnt | DECIMAL(12,2) | Nullable |
 | total_pymnt | DECIMAL(14,2) | |
 | out_prncp | DECIMAL(12,2) | |
-| model_score | INT | Nullable until populated — this project's independent 300–850 score |
+| model_score | INT | Nullable until populated — this project's independent score (observed range 453–591) |
 | model_risk_grade | CHAR(1) | Nullable until populated — this project's independent A–G grade |
 
 ## SQL Server: vw_PortfolioRiskSummary (view)
@@ -121,11 +121,11 @@ connects to directly. Columns: `loan_id`, `issue_date`, `vintage_month`,
 ## Power BI–only tables (not in SQL Server)
 
 Built directly inside the `.pbix` file to support the What-If score-cutoff
-simulator on Page 3 — see `Documentation/powerbi_storytelling_guide.md`.
+simulator on Page 3.
 
 | Table | Type | Purpose |
 |---|---|---|
-| `Score Cutoff` | What-If Parameter (300–850, step 10) | Drives the live slider and the 5 KPI cards |
-| `Cutoff Range` | Calculated table (`GENERATESERIES(300, 850, 10)`) | A second, independent copy of the same range, used only by the fixed reference table and the `*_CURVE` measures — deliberately kept unrelated to `Score Cutoff` in the data model so the reference table stays fixed regardless of slider position |
+| `Score Cutoff` | What-If Parameter (450–600, step 5; the scorecard's scores span 453–591) | Drives the live slider and the 5 KPI cards |
+| `Cutoff Range` | Calculated table (`GENERATESERIES(450, 600, 5)`) | A second, independent copy of the same range, used only by the fixed reference table and the `*_CURVE` measures — deliberately kept unrelated to `Score Cutoff` in the data model so the reference table stays fixed regardless of slider position |
 | `Decision Flow` | Manually entered (3 rows) | Category labels (`Total Loans`, `Bad Loans Declined`, `Good Loans Lost`) driving the Waterfall chart |
 | `Outcome Type` | Manually entered (2 rows) | Category labels (`Bad Loans Declined`, `Good Loans Lost`) driving the live 2-bar comparison chart |

@@ -27,9 +27,10 @@ GO
 
 /* ============================================================================
    QUERY 2: Vintage analysis by origination month
-   Only resolved loans are in the data, so recent vintages look safer than they
-   are: loans issued near the end of 2018 have not had time to default yet.
-   Read the trend only up to early 2017.
+   Only resolved loans are in the data. That pushes default rates UP for
+   2016-2017 vintages (loans still being repaid, mostly good, are excluded) and
+   DOWN for the newest vintages (their defaults have not happened yet).
+   Only 2015-01 to 2016-03 vintages are fully seasoned and comparable.
    Expect: first month 2015-01 default rate 0.2076, peak 2016-08 at 0.2709
    ============================================================================ */
 SELECT
@@ -145,12 +146,15 @@ GO
 /* ============================================================================
    QUERY 7 (view): vw_PortfolioRiskSummary
    The flat view Power BI connects to.
+   data_split marks the out-of-time test vintages (2017-10 onward) so Power BI
+   can filter model-vs-grade visuals to loans the scorecard never saw.
    ============================================================================ */
 CREATE OR ALTER VIEW vw_PortfolioRiskSummary AS
 SELECT
     f.loan_id, f.issue_date, f.vintage_month, f.loan_amnt, f.term_months,
     f.int_rate, f.lc_grade, f.lc_sub_grade, f.purpose, f.loan_status, f.defaulted,
     f.model_score, f.model_risk_grade,
+    CASE WHEN f.vintage_month >= '2017-10' THEN 'test' ELSE 'train' END AS data_split,
     b.addr_state, b.home_ownership, b.annual_inc, b.bureau_score, b.dti, b.revol_util
 FROM Fact_Loan f
 JOIN Dim_Borrower b ON f.loan_id = b.loan_id;

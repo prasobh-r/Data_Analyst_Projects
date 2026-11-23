@@ -9,7 +9,7 @@ the README precisely *because* the rough edges are visible here.
 
 ## Missingness in the raw LendingClub extract
 
-Printed directly by `Python/00_load_and_clean_lendingclub.py` on the 150,000-row
+Printed directly by `Python/01_load_and_clean_lendingclub.ipynb` on the 150,000-row
 cleaned extract:
 
 | Column | % Missing | Handling |
@@ -62,11 +62,16 @@ cleaned extract:
   them was a leakage-prevention decision made *before* training, not a
   post-hoc fix.
 - **`revol_util`'s coefficient came out sign-flipped** in the final logistic
-  regression (positive, where every other feature was negative as expected).
-  Diagnosed as a multicollinearity effect with `dti` and `loan_amnt` — it had
-  the weakest Information Value (0.034) of the retained features. Kept in the
-  model for completeness, flagged as unstable rather than silently trusted or
-  quietly dropped.
+  regression (+0.14, where every other feature was negative as expected). Its
+  WOE values correlate 0.48 with the bureau score, so it is partly redundant
+  once the bureau score is in the model; variance inflation factors are all
+  below 1.5, so this is not severe multicollinearity. Kept in the model for
+  completeness, flagged as unstable rather than silently trusted or quietly
+  dropped.
+- **WOE bins are fitted on the training vintages only** (2015-01 to 2017-09),
+  so no test-period outcome influences the scorecard. The first version of the
+  project fitted them on all loans; see the revision note in
+  `methodology_notes.md`.
 - **Out-of-time train/test default rates differ** (21.88% train vs. 18.57%
   test) — consistent with, and additional evidence for, the immature-vintage
   bias documented above, since the test set skews toward the more recent,
@@ -76,8 +81,16 @@ cleaned extract:
 
 ## What this means for reading the results
 
-Every number in this README's Results and Key Insight sections was produced
-*after* the checks above — the 21.55% overall default rate, the AUC/KS/Gini/PSI
-figures, and the vintage trend all already account for the limitations listed
-here. Nothing below is a caveat undermining those numbers; it's the record of
-how they were arrived at honestly.
+The figures in the README were produced after the checks above, and the model
+figures come from the out-of-time test set. Three cautions apply when reading
+them:
+
+- The test set (2017-10 to 2018-12) is the most immature part of the data, so
+  its default rate is lower than the training rate.
+- The grade-by-grade comparison for LendingClub grades F and G rests on few
+  loans (188 and 71 in the test set).
+- The 21.55% overall default rate reflects a resolved-loans-only sample and is
+  higher than a live book would show.
+
+See the revision note in `methodology_notes.md` for corrections made to the
+first version of the analysis.

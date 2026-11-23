@@ -1,0 +1,37 @@
+{
+  "features_used": [
+    "term_months_woe",
+    "bureau_score_woe",
+    "dti_woe",
+    "home_ownership_woe",
+    "monthly_income_woe",
+    "loan_amnt_woe",
+    "revol_util_woe",
+    "inq_last_6mths_woe"
+  ],
+  "auc": 0.6766,
+  "gini": 0.3531,
+  "ks": 25.8,
+  "psi_train_vs_test": 0.0472,
+  "train_vintages": [
+    "2015-01",
+    "2017-09"
+  ],
+  "test_vintages": [
+    "2017-10",
+    "2018-12"
+  ],
+  "train_default_rate": 0.2188,
+  "test_default_rate": 0.1857,
+  "test_loans": 15087,
+  "woe_fitted_on": "training vintages only",
+  "auc_comparison_out_of_time": {
+    "model_alone": 0.6766,
+    "lc_grade_alone": 0.6809,
+    "lc_grade_plus_model": 0.701,
+    "lc_grade_gain": 0.0201,
+    "lc_sub_grade_alone": 0.6878,
+    "lc_sub_grade_plus_model": 0.7017,
+    "lc_sub_grade_gain": 0.0139
+  }
+}
