@@ -2,8 +2,8 @@
 
 ![SQL Server](https://img.shields.io/badge/SQL_Server-T--SQL-CC2927?logo=microsoftsqlserver&logoColor=white)
 ![Power BI](https://img.shields.io/badge/Power_BI-Dashboard-F2C811?logo=powerbi&logoColor=black)
-![Validation](https://img.shields.io/badge/Validation-18_of_18_checks_pass-2e8b57)
-![Data](https://img.shields.io/badge/Data-2240_customers-1f6f8b)
+![Validation](https://img.shields.io/static/v1?label=Validation&message=18%20of%2018%20checks%20pass&color=2e8b57)
+![Data](https://img.shields.io/static/v1?label=Data&message=2240%20customers&color=1f6f8b)
 
 > A messy marketing dataset cleaned with every decision logged and proven by 18 automated checks. Then: **Champion and Loyal customers (45.7% of customers) bring 83.2% of revenue**, and **Campaign 2 was accepted by 1.32% of customers against 6.48% for Campaign 1**.
 
