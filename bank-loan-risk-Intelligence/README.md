@@ -1,19 +1,33 @@
 # Bank Loan Risk Intelligence
 
-An end-to-end credit risk analytics project on LendingClub loan data: data engineering in Python, an independently built WOE/IV credit scorecard validated out-of-time, a SQL Server analytics layer, and a 3-page Power BI dashboard with a live approval-cutoff simulator.
+![Python](https://img.shields.io/badge/Python-pandas%20%7C%20scikit--learn-3776AB?logo=python&logoColor=white)
+![SQL Server](https://img.shields.io/badge/SQL%20Server-T--SQL-CC2927?logo=microsoftsqlserver&logoColor=white)
+![Power BI](https://img.shields.io/badge/Power%20BI-Dashboard-F2C811?logo=powerbi&logoColor=black)
+![Validation](https://img.shields.io/badge/Out--of--time%20AUC-0.677-1f6f8b)
+
+> A credit scorecard built independently of the lender's own grade, validated on later loan vintages, and turned into an approval-cutoff tool. At a cutoff of 530, the approved test loans default at **11.7%** against **18.6%** for all test loans, while approving 54.9% of them.
 
 ![Portfolio & Trajectory](Images/page1_portfolio_trajectory.jpg)
 
-## At a glance
+Interactive file: [`PowerBI/Bank_Risk_Intelligence.pbix`](PowerBI/Bank_Risk_Intelligence.pbix) (Power BI Desktop). Screenshots of all three pages are in `Images/`.
 
-| | |
+## TL;DR for a busy reader
+
+| Question | Answer |
 |---|---|
-| **Data** | 150,000 resolved LendingClub loans, 2015 to 2018 (random sample, seed 42); 21.55% defaulted |
-| **Model** | Logistic regression on 8 WOE-binned features; LendingClub's own `int_rate`, `grade` and `sub_grade` are excluded (leakage) |
-| **Validation** | Trained on 2015-01 to 2017-09 vintages (134,913 loans), tested on 2017-10 to 2018-12 (15,087 loans): **AUC 0.677, Gini 0.353, KS 25.8, PSI 0.047** |
-| **Against the lender's grade** | Alone, the model ranks defaults slightly worse than LendingClub's grade (AUC 0.677 vs 0.681). Adding it to the grade lifts AUC to **0.701 (+0.020)** |
-| **Decision view** | On the test loans, a score cutoff of 530 approves 54.9% of loans with an 11.7% default rate, against 18.6% overall |
-| **Stack** | Python (pandas, scikit-learn), SQL Server (T-SQL), Power BI (DAX, What-If parameters) |
+| Does the model work on loans it has not seen? | Trained on 2015-01 to 2017-09 vintages (134,913 loans), tested on 2017-10 to 2018-12 (15,087 loans): **AUC 0.677, Gini 0.353, KS 25.8, PSI 0.047** (no significant population shift). Modest, and reported as such. |
+| Does it beat the lender's own grade? | Not on its own (AUC 0.677 vs 0.681 for LendingClub's grade). **Combined with the grade it lifts AUC to 0.701 (+0.020).** |
+| What can a lender do with it? | A score cutoff of 530 approves 54.9% of test loans with an 11.7% default rate, against 18.6% overall. The dashboard has a live cutoff simulator. |
+| Where does risk concentrate? | 60-month loans default at **34.9%** vs 17.5% for 36-month loans. Small business loans default at **35.1%**. CA, TX, NY and FL hold 38.2% of exposure. |
+| What should a reader not trust? | The 21.55% default rate comes from a resolved-loans-only sample, not a live book. Only 2015 to 2016 Q1 vintages are fully seasoned, so later trends mix real change with a filter effect. |
+
+**Suggested actions** (hypotheses to test; the data has no pricing or loss data):
+
+1. Use the model score **together with** the lender's grade, not instead of it. Together they give the best ranking.
+2. Pick the cutoff on expected profit once pricing and loss-given-default are available. 530 is an illustration of the trade-off, not a recommendation.
+3. Check whether pricing and limits for 60-month and small business loans reflect their default rates of about 35%.
+
+**Stack:** Python (pandas, scikit-learn) · SQL Server (T-SQL) · Power BI (DAX, What-If parameters)
 
 **Contents:** [Business problem](#business-problem) · [Architecture](#architecture) · [Dataset](#dataset) · [What I built](#what-i-built) · [Results](#results) · [Limitations](#limitations) · [How to reproduce](#how-to-reproduce) · [Repository structure](#repository-structure) · [Future improvements](#future-improvements) · [Author and credits](#author-and-credits)
 
@@ -25,7 +39,7 @@ A consumer lending analytics team needs to answer three questions that single-pa
 2. **Does a new model add value?** Validated out-of-time, and tested against what the original lender's own underwriting already captures.
 3. **Where does risk concentrate, and what should we do about it?** Segmentation that feeds an actionable decision tool.
 
-The project builds one pipeline to answer all three: raw CSV, Python cleaning and scorecard modeling, SQL Server star schema and queries, and a 3-page Power BI dashboard.
+The project builds one pipeline to answer all three: raw CSV, Python cleaning and scorecard modelling, SQL Server star schema and queries, and a 3-page Power BI dashboard.
 
 ## Architecture
 
@@ -48,7 +62,7 @@ Power BI: 3-page dashboard (portfolio trajectory, scorecard validation,
 
 ## Dataset
 
-[LendingClub accepted loans, 2007 to 2018](https://www.kaggle.com/datasets/wordsforthewise/lending-club) (via Kaggle), filtered to resolved loans (`Fully Paid`, `Charged Off` or `Default`) from 2015 onward so the target is clean, then a random sample of 150,000 loans (seed 42). Download steps and the full column mapping are in `Documentation/dataset_guide.md`.
+[LendingClub accepted loans, 2007 to 2018](https://www.kaggle.com/datasets/wordsforthewise/lending-club) (via Kaggle), filtered to resolved loans (`Fully Paid`, `Charged Off` or `Default`) from 2015 onward so the target is clean, then a random sample of 150,000 loans (seed 42). 21.55% of them defaulted. Download steps and the full column mapping are in `Documentation/dataset_guide.md`.
 
 | Field group | Source columns |
 |---|---|
@@ -79,12 +93,7 @@ The filter to resolved loans shapes the vintage trend and the default rate; see 
 
 ### SQL Server: portfolio analytics layer
 
-A star schema (`Dim_Borrower`, `Fact_Loan`) with queries for:
-
-- Vintage analysis: default rate by origination month.
-- **Model grade vs LendingClub grade**: a cross-tab with loan counts per cell, for all loans (about 90% were used for training, so in-sample) and for the out-of-time test vintages only.
-- Geographic concentration, purpose-level risk and pricing, and DTI risk deciles via `NTILE()` with a deterministic tie-breaker.
-- A reusable view (`vw_PortfolioRiskSummary`) that feeds Power BI.
+A star schema (`Dim_Borrower`, `Fact_Loan`) with queries for vintage analysis (default rate by origination month), a model-grade vs LendingClub-grade cross-tab, geographic concentration, purpose-level risk and pricing, and DTI risk deciles via `NTILE()` with a deterministic tie-breaker. A reusable view (`vw_PortfolioRiskSummary`) feeds Power BI. About 90% of all loans were used for training, so queries over all loans are in-sample; the cross-tab is also run on the out-of-time test vintages only.
 
 Scripts: `SQL/01_Database_Setup_LendingClub.sql` (schema), `SQL/03_Load_Model_Scores.sql` (loads the scorecard output), `SQL/02_Analysis_Queries_LendingClub.sql` (queries).
 
@@ -119,6 +128,8 @@ Thirteen candidate features were ranked by Information Value on the training vin
 
 Nothing clears "Strong". Loan term and bureau score are the only "Medium" signals: across all 150,000 loans, 60-month loans default at 34.9% against 17.5% for 36-month loans. Risk is spread over several weak-to-medium signals rather than one dominant driver. `purpose` (IV 0.0199) fell just below the cut-off and was not used.
 
+One coefficient is unstable: `revol_util` is positive (+0.14) where every other feature is negative. It overlaps with the bureau score, so it adds little independent signal. The feature is kept and flagged ([detail](Documentation/results_detail.md#revol_util-anomaly)).
+
 **Out-of-time performance** (15,087 test loans):
 
 | Metric | Value |
@@ -129,8 +140,6 @@ Nothing clears "Strong". Loan term and bureau score are the only "Medium" signal
 | PSI (train vs test) | 0.047 (below 0.1: no significant population shift) |
 
 Across the test loans, model grades A to G default at 5.9%, 9.8%, 13.4%, 18.3%, 23.0%, 28.9% and 38.4%.
-
-**One anomaly:** the `revol_util` coefficient is positive (+0.14) where every other feature is negative. Its WOE values correlate 0.48 with the bureau score across all loans (0.46 on the training loans), so once the bureau score is in the model it adds little independent signal. Variance inflation factors are all below 1.5, so this is not severe multicollinearity. The feature is kept and flagged as unstable.
 
 ### Benchmark against LendingClub's own grade
 
@@ -144,9 +153,7 @@ Same out-of-time loans:
 | Grade + model score | 0.701 (+0.020) |
 | Sub-grade + model score | 0.702 (+0.014) |
 
-On its own the model ranks defaults slightly worse than the lender's grade, which reflects the lender's own underwriting. Adding the model to the grade raises AUC by 0.020 (0.014 against the sub-grade): a small amount of information the grade does not already capture.
-
-Within each of the seven LendingClub grades the model ranks defaults better than chance (AUC 0.57 to 0.62); grades F and G have only 188 and 71 test loans, so those two are less certain. Inside LendingClub grade B (341 to 945 loans per cell), the default rate rises from 8.8% for model grade A to 19.9% for model grade F, with one small reversal between model grades B and C (10.4% vs 10.2%).
+On its own the model ranks defaults slightly worse than the lender's grade, which reflects the lender's own underwriting. Adding the model to the grade raises AUC by 0.020 (0.014 against the sub-grade): a small amount of information the grade does not already capture. Within each LendingClub grade the model still ranks defaults better than chance ([detail](Documentation/results_detail.md#within-grade-ranking)).
 
 ### Decision view: score cutoff on the test loans
 
@@ -157,22 +164,14 @@ Approve loans scoring at or above the cutoff. Test vintages only (15,087 loans, 
 | 500 | 92.6% | 16.9% | 441 | 678 |
 | 510 | 84.6% | 15.6% | 805 | 1,519 |
 | 520 | 71.9% | 13.9% | 1,295 | 2,949 |
-| 530 | 54.9% | 11.7% | 1,832 | 4,968 |
+| **530** | **54.9%** | **11.7%** | 1,832 | 4,968 |
 | 540 | 36.2% | 9.1% | 2,307 | 7,323 |
 | 550 | 21.5% | 6.9% | 2,578 | 9,272 |
 | 560 | 11.1% | 5.1% | 2,716 | 10,694 |
 
 Raising the cutoff lowers the default rate of approved loans, and every step costs good loans. Where to stop is a business decision about margin and volume that this data cannot settle (it has no revenue or loss-given-default). The dashboard's simulator shows the same trade-off.
 
-**Same approval rate, different rankings.** If the best-ranked 30%, 50% or 70% of the test loans are approved, the default rate of the approved loans is:
-
-| Approved share | Model score | LendingClub sub-grade | Sub-grade + model |
-|---:|---:|---:|---:|
-| 30% | 8.4% | 7.4% | 6.9% |
-| 50% | 11.0% | 9.9% | 9.6% |
-| 70% | 13.6% | 13.3% | 12.8% |
-
-The model alone is a little worse than the lender's sub-grade, and the two together are 0.3 to 0.5 percentage points better than the sub-grade alone. A "one-lever" change to underwriting will not sharpen approvals much, because no single feature dominates and the model's gain over the lender's grade is small; the useful output is a combined ranking plus an explicit cutoff.
+At the same approval share, the model alone is a little worse than the lender's sub-grade, and the two together are 0.3 to 0.5 percentage points better than the sub-grade alone ([table](Documentation/results_detail.md#same-approval-share-different-rankings)). No single feature dominates and the model's gain over the lender's grade is small, so the useful output is a combined ranking plus an explicit cutoff, not a one-lever change to underwriting.
 
 ### Portfolio findings
 
@@ -184,14 +183,12 @@ The model alone is a little worse than the lender's sub-grade, and the two toget
 
 ## Limitations
 
+The four that matter most for reading the results. The rest (small cells, outliers, missing values, no age data) are in [`Documentation/results_detail.md`](Documentation/results_detail.md#other-limitations).
+
 1. **Resolved loans only.** Loans still being repaid are left out, and they are mostly good loans, so 2016 to 2017 default rates are pushed up. The newest vintages have not had time to default, so 2018 rates are pushed down. Splitting by term shows the first effect: 36-month loans default at about 15% to 16% through 2016 Q1 (the last quarter whose 36-month loans are fully resolved), then at 22.1% in 2016 Q2, while 60-month loans show no such jump. Only the 2015 to 2016 Q1 vintages are fully seasoned (about 20%). After that, a real change in loan quality cannot be separated from the filter with this data, and the 2018 Q4 default rate of 2.2% is an artifact. The out-of-time test set is the most immature part of the data, which is why its default rate (18.6%) is below the training rate (21.9%).
 2. **The 21.55% default rate is not a live-book rate.** It comes from a resolved-only sample.
-3. **Modest model performance** (AUC 0.677), with one unstable coefficient (`revol_util`). The model improves on the lender's grade only slightly, and SQL queries over all loans (3a, and the dashboard with the filter on `All`) are in-sample for about 90% of loans; use the test vintages for any claim.
-4. **Small cells.** LendingClub grades F and G have 188 and 71 test loans; purposes with fewer than 1,000 loans (for example wedding, 2 loans) are not compared.
-5. **No borrower age, and no month-by-month repayment ledger.** A roll-rate or delinquency-transition analysis would need a separate, unfiltered extract of open loans.
-6. **Outliers left as supplied:** 7 loans with `dti` of 999 (92 above 100), 10 loans with `annual_inc` of 1,000 or less and 47 above 1,000,000. Quantile WOE bins limit their influence. Four loans with status `Default` are counted as defaults. Details in `Documentation/data_quality_notes.md`.
-7. **Missing values:** `emp_title` (6.54% missing) is excluded from the model as high-cardinality free text; `emp_length` is filled with an `"Unknown"` category; 345 loans (0.23%) have no `last_pymnt_d` and all of them defaulted, consistent with defaults before any payment.
-8. **No pricing or loss data**, so the cutoff table cannot say which cutoff is most profitable.
+3. **Modest model performance** (AUC 0.677), with one unstable coefficient (`revol_util`). The model improves on the lender's grade only slightly. SQL queries over all loans (3a, and the dashboard with the filter on `All`) are in-sample for about 90% of loans; use the test vintages for any claim.
+4. **No pricing or loss data**, so the cutoff table cannot say which cutoff is most profitable.
 
 ## How to reproduce
 
@@ -200,7 +197,7 @@ Python 3.13 with the packages in `requirements.txt` was used for the checked run
 1. `pip install -r requirements.txt`, then download the raw LendingClub file from Kaggle to `Dataset/raw/accepted_2007_to_2018Q4.csv` (see `Documentation/dataset_guide.md`).
 2. Run the notebooks in `Python/` in order, from the `Python/` folder: `01` (needs the raw file), `02`, `03`, `04`. All paths are relative to the repository root. They write the CSVs in `Dataset/` (see `Dataset/README.md`) and two JSON summaries in `Documentation/`.
 3. In SQL Server: create the database (first statement of `SQL/01_Database_Setup_LendingClub.sql`), import `Dataset/loans_clean.csv` as `stg_loans_clean`, run the rest of that script, import `Dataset/loans_scored.csv` as `stg_loans_scored`, run `SQL/03_Load_Model_Scores.sql`, then run `SQL/02_Analysis_Queries_LendingClub.sql`. The "Expect" comments in the SQL files give the values to compare against.
-4. Open `PowerBI/Bank_Risk_Intelligence.pbix`. To refresh it against your own database, update the SQL Server data source in Power BI (Transform data, Data source settings). Screenshots of all three pages are in `Images/`.
+4. Open `PowerBI/Bank_Risk_Intelligence.pbix`. To refresh it against your own database, update the SQL Server data source in Power BI (Transform data, Data source settings).
 
 ## Repository structure
 
@@ -238,6 +235,7 @@ bank-loan-risk-Intelligence/
     ├── data_dictionary.md
     ├── data_quality_notes.md
     ├── methodology_notes.md
+    ├── results_detail.md             # extra results and remaining limitations
     ├── woe_scorecard_artifact.json
     └── model_evaluation_summary.json
 ```
@@ -251,6 +249,8 @@ bank-loan-risk-Intelligence/
 
 ## Author and credits
 
-Prasobh R.
+**Prasobh R** · [LinkedIn](https://www.linkedin.com/in/YOUR-PROFILE) · [Portfolio](https://YOUR-PORTFOLIO-URL)
+
+Skills demonstrated: credit scorecard modelling (WOE/IV, logistic regression, KS/Gini/PSI), out-of-time validation, T-SQL star schema, Power BI with DAX and What-If parameters.
 
 Dataset: LendingClub accepted loan data (2007 to 2018), via Kaggle (`wordsforthewise/lending-club`). Check the licence on the dataset page before reuse. The raw data is not redistributed in this repository; see `Documentation/dataset_guide.md`.
