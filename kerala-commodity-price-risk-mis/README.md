@@ -1,17 +1,25 @@
 # Kerala Essential Commodities: Price-Risk MIS
 
-An Advanced Excel / MIS reporting project that turns **700K+ daily retail price records** (14 Kerala districts, 72 essential commodities, January 2023 to February 2026) into a monthly **price-pressure monitoring pack**: a composite risk index, an exception report, district comparisons, commodity-group trends and a one-page dashboard.
+![Excel](https://img.shields.io/badge/Excel-MIS_Dashboard-217346?logo=microsoftexcel&logoColor=white)
+![Python](https://img.shields.io/badge/Python-Validation_and_Backtest-3776AB?logo=python&logoColor=white)
+
+> A monthly price-pressure monitoring pack built from **700K+ daily retail prices** (14 Kerala districts, 72 essential commodities, January 2023 to February 2026): a 0 to 100 risk score, an exception report and a one-page Excel dashboard. In February 2026 it flags **dry chillies** as the only Red alert (price +15.0% month on month, +41.9% year on year, in all 14 districts).
 
 ![Dashboard](docs/screenshots/dashboard.png)
 
-**Contents:** [Quick start](#quick-start) · [Business question](#business-question) · [Key findings](#key-findings-data-through-27-february-2026) · [Data source and attribution](#data-source-and-attribution) · [Method](#method-in-brief) · [Validation](#validation) · [Backtest](#backtest) · [Reproduce](#reproduce) · [Limitations](#limitations) · [Repository layout](#repository-layout)
+## TL;DR for a busy reader
 
-## Quick start
+| Question | Answer |
+|---|---|
+| What does it do? | Scores 60 commodities each month on seven price-based signals, ranks them, and lists Red / Amber alerts with the price direction and a suggested action. |
+| What does it show now? | Feb 2026: **dry chillies is the only Red alert** (score about 75). Garlic and Ladies Finger are Amber; garlic is *easing* (-3.9% month on month) from a high level. |
+| Can the numbers be trusted? | The scoring was built twice, in Excel formulas and in pandas, and **all 1,560 scored commodity-months match**. About 120,000 formulas recalculate with zero errors. |
+| Does a high score predict a price rise? | **Only weakly, and the project says so.** Red and Amber flags are followed by a 5%+ rise about twice as often as average (29.1% and 33.0% vs a 14.7% base rate), but most of that comes from some commodities simply being volatile. Three months after a Red flag the price is usually lower (71% of cases). Read it as "a spike is in progress", not "a surge is coming". |
+| Where does the data come from? | Department of Economics and Statistics, Government of Kerala. The cleaning, scoring and workbook are independent work, not official statistics. |
 
-1. Open `Kerala_Commodity_Price_Risk_MIS.xlsx` and go to the **Dashboard** sheet.
-2. Pick a reporting month in the yellow cell (C4) and a commodity for the trend charts (G4).
-3. Read the KPI cards and the Top 10 alerts. Each alert shows the **price direction** (Rising / Flat / Easing, month on month) next to its risk score, because a high score can be a price that is already falling back. Open **Watchlist** for the full exception report with suggested actions.
-4. Use **Group_Heatmap** and **District_View** for trends and district comparisons; change scoring settings on **Assumptions**.
+**Stack:** Advanced Excel (formula-driven scoring, drop-down dashboard) · Python (pandas: independent validation and backtest)
+
+**Contents:** [Business question](#business-question) · [Key findings](#key-findings) · [Using the workbook](#using-the-workbook) · [Data source and attribution](#data-source-and-attribution) · [Method](#method-in-brief) · [Validation](#validation) · [Backtest](#backtest) · [Reproduce](#reproduce) · [Limitations](#limitations) · [Repository layout](#repository-layout)
 
 ## Business question
 
@@ -19,7 +27,9 @@ Which essential commodities and districts show the strongest signs of price pres
 
 The risk score is a **price-only indicator of current price pressure**. It is not a shortage forecast, and the [backtest](#backtest) shows it should not be read as a predictor of further rises.
 
-## Key findings (data through 27 February 2026)
+## Key findings
+
+Data through 27 February 2026.
 
 - **Feb 2026:** dry chillies is the only Red alert (score about 75): price **+15.0% month on month** and **+41.9% year on year**, and all 14 districts are more than 10% above their own 12-month averages, a statewide pattern. Garlic and Ladies Finger are Amber; garlic is *easing* (-3.9% month on month) from a high level, which is why the Top 10 shows direction. 60 of 72 commodities are scored; 12 are excluded for thin district coverage.
 - **Coconut oil (Kera)** rose from about Rs 165/L (Jan 2023) to a peak of about Rs 466 (Oct 2025) and was Red in Jan 2025 and Jun to Aug 2025, before easing to about Rs 380. Its volatility stayed low because the rise was steady, which is why year-on-year change and deviation from the 12-month average are scored separately from volatility.
@@ -27,6 +37,13 @@ The risk score is a **price-only indicator of current price pressure**. It is no
 - Red commodities per month ranged from 0 to 10, peaking in May and Jun 2024; there were no Red alerts from Feb to May 2025.
 
 ![Group heatmap](docs/screenshots/group_heatmap.png)
+
+## Using the workbook
+
+1. Open `Kerala_Commodity_Price_Risk_MIS.xlsx` and go to the **Dashboard** sheet.
+2. Pick a reporting month in the yellow cell (C4) and a commodity for the trend charts (G4).
+3. Read the KPI cards and the Top 10 alerts. Each alert shows the **price direction** (Rising / Flat / Easing, month on month) next to its risk score, because a high score can be a price that is already falling back. Open **Watchlist** for the full exception report with suggested actions.
+4. Use **Group_Heatmap** and **District_View** for trends and district comparisons; change scoring settings on **Assumptions**.
 
 ## Data source and attribution
 
@@ -68,7 +85,7 @@ Checked:
 - **Recalculation:** about 120,000 formulas recalculated in LibreOffice with zero errors.
 - **Monthly aggregation:** recomputed monthly averages vs `archive/monthly_price_changes.csv`: median difference 0.02%, 95th percentile 0.23%, maximum 4.7% (a commodity reported by two districts).
 
-Backtested (section below): whether high scores precede later price rises. Not done: a backtest of the supplied forecasts (the files hold only future predictions).
+Backtested (next section): whether high scores precede later price rises. Not done: a backtest of the supplied forecasts (the files hold only future predictions).
 
 ## Backtest
 
@@ -111,15 +128,12 @@ On Windows PowerShell, create and activate a virtual environment first: `python 
 
 ## Limitations
 
+The four that matter most for reading the results. All nine are listed in [docs/LIMITATIONS.md](docs/LIMITATIONS.md).
+
 1. **Price data only.** No market arrivals, stock, rainfall or import data, so supply stress is inferred from price-based proxies.
-2. **Possible carried-forward prices.** 89.0% of daily prices equal the previous record for the same district and commodity (no single date exceeds 94.5%, so there are no whole-day copies). Retail prices are sticky, but if the source repeats the last available day, some values may be stale; this cannot be separated from genuinely unchanged prices. Monthly means dampen the effect.
-3. **Uneven coverage.** Some commodities are reported by few districts; 12 of 72 are excluded in Feb 2026. Commodity coverage also changes slightly between years (70 to 72).
-4. **Analyst-defined weights, caps and thresholds**, calibrated on 2024 to Feb 2026 data. Test sensitivity before operational use.
-5. **Short seasonal history** (3 years): for example, tomato's July peak is largely driven by 2023.
-6. **Forecasts are indicative scenarios.** They cover only Tomato, Ladies Finger and Coconut oil (Kera), their method is undocumented and they have not been backtested (the files hold only future values). Tomato's forecast starts 24.4% above its last 30 observations.
-7. **The risk score is not a proven predictor.** The backtest is in-sample (weights were calibrated on the same period) and shows little ability to time rises within a commodity or to rank commodities month by month.
-8. **Monthly aggregates in the workbook** for speed; a full 700K-row Power Pivot model must be built separately (see the `Model_Guide` sheet). Drop-downs replace slicers.
-9. Source commodity groups are kept as supplied (for example, onion small sits under Spices and Condiments).
+2. **The risk score is not a proven predictor.** The backtest is in-sample (weights, caps and thresholds are analyst-defined and were calibrated on the same period) and shows little ability to time rises within a commodity or to rank commodities month by month. Test sensitivity before operational use.
+3. **Possible carried-forward prices.** 89.0% of daily prices equal the previous record for the same district and commodity (no single date exceeds 94.5%, so there are no whole-day copies). Retail prices are sticky, but if the source repeats the last available day, some values may be stale; this cannot be separated from genuinely unchanged prices. Monthly means dampen the effect.
+4. **Uneven coverage.** Some commodities are reported by few districts; 12 of 72 are excluded in Feb 2026. Commodity coverage also changes slightly between years (70 to 72).
 
 **Next steps:** test the score on data after Feb 2026, backtest the forecasts (refit at past cut-offs), add arrivals and rainfall data, add district-level risk scores, and build the Power Pivot model with DAX and slicers.
 
@@ -146,6 +160,7 @@ On Windows PowerShell, create and activate a virtual environment first: `python 
 │   ├── DATA_DICTIONARY.md
 │   ├── DATA_QUALITY_LOG.md
 │   ├── BACKTEST.md
+│   ├── LIMITATIONS.md                     # all nine limitations
 │   ├── Dataset_Usage.xlsx
 │   └── screenshots/
 ├── build/                                 # generated files (git-ignored)
@@ -155,4 +170,8 @@ On Windows PowerShell, create and activate a virtual environment first: `python 
 
 ## Author and licence
 
-Prasobh R. Code licence: MIT (see `LICENSE`; it covers the code only). Source data remains subject to the terms of the Department of Economics and Statistics, Government of Kerala; confirm them before redistributing the data files.
+**Prasobh R** · [LinkedIn](https://www.linkedin.com/in/YOUR-PROFILE) · [Portfolio](https://YOUR-PORTFOLIO-URL)
+
+Skills demonstrated: formula-driven Excel modelling and dashboards, composite risk scoring, independent validation in pandas, backtesting with bootstrap intervals, data cleaning and quality checks on 700K+ records.
+
+Code licence: MIT (see `LICENSE`; it covers the code only). Source data remains subject to the terms of the Department of Economics and Statistics, Government of Kerala; confirm them before redistributing the data files.
