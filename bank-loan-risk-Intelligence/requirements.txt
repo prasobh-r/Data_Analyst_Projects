@@ -1,3 +1,4 @@
+# Re-run and checked with Python 3.13, pandas 3.0, numpy 2.5, scikit-learn 1.9
 pandas>=2.0
 numpy>=1.24
 scikit-learn>=1.3

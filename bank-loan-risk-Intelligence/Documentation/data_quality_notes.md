@@ -9,16 +9,18 @@ the README precisely *because* the rough edges are visible here.
 
 ## Missingness in the raw LendingClub extract
 
-Printed directly by `Python/01_load_and_clean_lendingclub.ipynb` on the 150,000-row
-cleaned extract:
+Printed by `Python/01_load_and_clean_lendingclub.ipynb` for the filtered loans
+(resolved, 2015+ vintages) before the 150,000-loan sample is drawn and before
+any filling. The sample itself shows 6.54% missing `emp_title`, 6.45%
+`"Unknown"` `emp_length` and 0.23% missing `last_pymnt_d` (345 loans).
 
 | Column | % Missing | Handling |
 |---|---|---|
 | `emp_title` | 6.54% | Excluded from the model entirely — high-cardinality free text, not usable as a WOE bin without NLP work outside this project's scope |
 | `emp_length` | 6.45% | Filled as `"Unknown"` category — kept as a legitimate bin rather than dropped, since "employer didn't report length" may itself carry signal |
-| `last_pymnt_d` | 0.22% | **Investigated, not assumed.** Cross-checked in `02_EDA_and_cleaning.ipynb`: rows missing this field show a **100% default rate**, confirming they represent loans that defaulted before any payment was ever recorded — not a random data gap |
+| `last_pymnt_d` | 0.22% (0.23% in the sample) | **Investigated, not assumed.** Cross-checked in `02_EDA_and_cleaning.ipynb`: rows missing this field show a **100% default rate**, confirming they represent loans that defaulted before any payment was ever recorded — not a random data gap |
 | `revol_util` | 0.06% | Filled with the column median |
-| `dti` | 0.00% | No missing values — already complete in the source extract |
+| `dti` | under 0.005% | Filled with the column median |
 
 ---
 
@@ -29,6 +31,22 @@ cleaned extract:
   (36, 60) — no malformed entries
 - No non-positive `loan_amnt` or `monthly_income` values survived the cleaning
   filters
+
+---
+
+## Outliers and values left as supplied
+
+Counted in `Dataset/loans_clean.csv` (150,000 loans). None were removed or
+capped; the quantile-based WOE bins put extreme values in the first or last
+bin, which limits their influence on the scorecard.
+
+| Item | Count | Note |
+|---|---|---|
+| `dti` of 999 | 7 loans | Placeholder-like value in the source (maximum is 999) |
+| `dti` above 100 | 92 loans | Includes the 7 above |
+| `annual_inc` of 1,000 or less | 10 loans | Minimum is 1 |
+| `annual_inc` above 1,000,000 | 47 loans | Maximum is 9,500,000 |
+| `loan_status` = `Default` | 4 loans | Counted as defaults with the 32,315 `Charged Off` loans (32,319 in total) |
 
 ---
 
@@ -48,7 +66,7 @@ cleaned extract:
   binary target) means loans issued close to the 2018Q4 extract date haven't
   had time for all their eventual defaults to occur yet. The vintage
   default-rate trend's apparent decline after mid-2016 is this artifact, not
-  real portfolio improvement — see the README's Key Insight section and the
+  real portfolio improvement — see the README's Limitations section and the
   dashboard's shaded annotation on Page 1.
 
 ---
@@ -63,7 +81,8 @@ cleaned extract:
   post-hoc fix.
 - **`revol_util`'s coefficient came out sign-flipped** in the final logistic
   regression (+0.14, where every other feature was negative as expected). Its
-  WOE values correlate 0.48 with the bureau score, so it is partly redundant
+  WOE values correlate 0.48 with the bureau score across all loans (0.46 on the
+  training loans), so it is partly redundant
   once the bureau score is in the model; variance inflation factors are all
   below 1.5, so this is not severe multicollinearity. Kept in the model for
   completeness, flagged as unstable rather than silently trusted or quietly

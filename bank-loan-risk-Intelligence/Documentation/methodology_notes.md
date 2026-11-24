@@ -1,15 +1,15 @@
-# Methodology Notes — Credit Risk Techniques Used in This Project
+# Methodology Notes: Credit Risk Techniques Used in This Project
 
-Reference doc so you can explain these confidently in interviews. All "Your
-result" lines below are filled in from the actual notebook runs — see
+What each technique is, why it is used, and the result it gave in this project.
+Every "Result" line comes from the notebook runs; see
 `woe_scorecard_artifact.json` and `model_evaluation_summary.json` for the
-underlying source data.
+underlying values.
 
 ---
 
 ## Revision note
 
-An independent review of the first version of this project found four problems.
+A review of the first version of this project found four problems.
 All four were fixed and the notebooks re-run; the numbers below are from the
 corrected run.
 
@@ -18,15 +18,15 @@ corrected run.
    moved the test AUC from 0.6713 to 0.6682.
 2. **`term_months` was dropped by a binning bug.** Quantile binning collapsed
    a two-valued feature (36 or 60 months) into one bin, giving IV = 0.000. As a
-   category its IV is 0.178, the highest of any feature (60-month loans
-   default at 34.9% against 17.5%).
+   category its IV is 0.178, the highest of any feature (across all loans,
+   60-month loans default at 34.9% against 17.5%).
 3. **The grade comparison was in-sample.** The earlier "8.1% to 21.7% inside
    Grade B" figure used all loans, about 90% of which trained the model, and
    was not monotonic in the smaller grades. The comparison now uses the
    out-of-time test loans only, with cell counts, and adds an AUC comparison of
    the lender's grade alone against grade plus model score.
 4. **The `revol_util` explanation was not supported.** Its WOE values
-   correlate 0.48 with the bureau score, not with `dti` or `loan_amnt`, and
+   correlate 0.48 with the bureau score across all loans (0.46 on the training loans), not with `dti` or `loan_amnt`, and
    all variance inflation factors are below 1.5.
 
 ---
@@ -64,7 +64,7 @@ see exactly why an applicant's score is what it is, bin by bin. This
 interpretability requirement is a real, defining constraint in credit risk
 modeling that plain black-box models don't satisfy.
 
-**Your result** (fitted on the training vintages only):
+**Result** (fitted on the training vintages only):
 
 | Feature | IV | Strength |
 |---|---|---|
@@ -110,7 +110,7 @@ between the two curves.
 predicts "never defaults" would still be ~78% accurate. KS (like AUC) is
 threshold-independent and imbalance-robust.
 
-**Your result: KS = 25.80 — Acceptable.** A real, honest result for an
+**Result: KS = 25.80 — Acceptable.** A modest result for an
 8-feature scorecard that deliberately excludes LendingClub's own `int_rate`
 and `grade` (leakage risk) — a materially harder task than a model that gets
 to see the lender's own pricing decision.
@@ -123,7 +123,7 @@ to see the lender's own pricing decision.
 0–1 (or sometimes reported as a percentage) range that's the conventional way
 credit risk teams report model discrimination, alongside KS.
 
-**Your result: Gini = 0.353** (from AUC = 0.677, out-of-time test set).
+**Result: Gini = 0.353** (from AUC = 0.677, out-of-time test set).
 
 ---
 
@@ -150,7 +150,7 @@ channel mix, etc.). PSI is the standard early-warning check risk teams run
 periodically — this is the difference between "built a model" and "operates a
 model in production."
 
-**Your result: PSI = 0.047 — No significant population shift.** Computed
+**Result: PSI = 0.047 — No significant population shift.** Computed
 comparing the train population (2015-01 to 2017-09 vintages, 21.88% default
 rate) against the out-of-time test population (2017-10 to 2018-12 vintages,
 18.57% default rate). The lower test-set default rate is consistent with —
@@ -171,15 +171,14 @@ delinquency bucket move to another bucket in the next period (e.g., what % of
 and strategy — if cure rates from 30dpd are high, light-touch reminders make
 sense; if they're low, earlier and more aggressive intervention pays off.
 
-**Your result: not available with this dataset, and documented as such rather
-than faked.** Query 4 in `SQL/02_Analysis_Queries_LendingClub.sql` returns
-zero rows against the real data — by design, not by error. The modeling
-dataset was deliberately filtered to fully-resolved loans only (`Fully Paid`,
-`Charged Off`, `Default`) to support a clean binary target, which means no
-loan in `Fact_Loan` is ever in an intermediate delinquency state (`Late`,
-`In Grace Period`) to build a transition matrix from. A true roll-rate
+**Result: not available with this dataset.** No roll-rate query is included in
+`SQL/02_Analysis_Queries_LendingClub.sql`, by design. The modeling dataset was
+filtered to fully-resolved loans only (`Fully Paid`, `Charged Off`, `Default`)
+to support a clean binary target, so no loan in `Fact_Loan` is ever in an
+intermediate delinquency state (`Late`, `In Grace Period`) from which to build
+a transition matrix. A true roll-rate
 analysis would require a separate, unfiltered extract of currently-open
-loans — noted as a Future Improvement rather than forced with unsuitable data.
+loans, listed as a future improvement.
 
 ---
 
@@ -190,7 +189,7 @@ their default rate over loan age, to separate "this cohort of loans is
 inherently riskier" from "defaults are just accumulating over time across all
 cohorts."
 
-**Your result:** The reported default rate moves from **~20.8% (January 2015)**
+**Result:** The reported default rate moves from **~20.8% (January 2015)**
 to **27.09% (August 2016)**, then falls sharply toward 2018. Neither movement
 can be taken at face value, because the data holds resolved loans only
 (Fully Paid or Charged Off) and that filter distorts the trend in two ways:
