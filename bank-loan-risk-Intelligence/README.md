@@ -1,9 +1,9 @@
 # Bank Loan Risk Intelligence
 
-![Python](https://img.shields.io/badge/Python-pandas%20%7C%20scikit--learn-3776AB?logo=python&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
 ![SQL Server](https://img.shields.io/badge/SQL%20Server-T--SQL-CC2927?logo=microsoftsqlserver&logoColor=white)
 ![Power BI](https://img.shields.io/badge/Power%20BI-Dashboard-F2C811?logo=powerbi&logoColor=black)
-![Validation](https://img.shields.io/badge/Out--of--time%20AUC-0.677-1f6f8b)
+![Validation](https://img.shields.io/badge/Out--of--time_AUC-0.677-1f6f8b)
 
 > A credit scorecard built independently of the lender's own grade, validated on later loan vintages, and turned into an approval-cutoff tool. At a cutoff of 530, the approved test loans default at **11.7%** against **18.6%** for all test loans, while approving 54.9% of them.
 
